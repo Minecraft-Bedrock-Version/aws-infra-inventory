@@ -1,0 +1,412 @@
+{
+  "Roles": [
+    {
+      "Role": {
+        "Path": "/aws-service-role/rds.amazonaws.com/",
+        "RoleName": "AWSServiceRoleForRDS",
+        "RoleId": "AROAUGLNGQFDWAUXYD5QF",
+        "Arn": "arn:aws:iam::288528695623:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+        "CreateDate": "2026-01-03T13:31:28+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "rds.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Description": "Allows Amazon RDS to manage AWS resources on your behalf",
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "edc80ea4-dd97-410b-87bf-af3af40a32c2",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:47 GMT",
+            "x-amzn-requestid": "edc80ea4-dd97-410b-87bf-af3af40a32c2",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "AmazonRDSServiceRolePolicy",
+            "PolicyArn": "arn:aws:iam::aws:policy/aws-service-role/AmazonRDSServiceRolePolicy"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "8c559fd4-a590-48d5-b1c6-4d5534b615e0",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:48 GMT",
+            "x-amzn-requestid": "8c559fd4-a590-48d5-b1c6-4d5534b615e0",
+            "content-type": "text/xml",
+            "content-length": "573"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/aws-service-role/resource-explorer-2.amazonaws.com/",
+        "RoleName": "AWSServiceRoleForResourceExplorer",
+        "RoleId": "AROAUGLNGQFD5V75NESDU",
+        "Arn": "arn:aws:iam::288528695623:role/aws-service-role/resource-explorer-2.amazonaws.com/AWSServiceRoleForResourceExplorer",
+        "CreateDate": "2026-01-09T15:33:41+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "resource-explorer-2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "8df319c1-d0e1-44f1-a33a-0de38a67503f",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:48 GMT",
+            "x-amzn-requestid": "8df319c1-d0e1-44f1-a33a-0de38a67503f",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "AWSResourceExplorerServiceRolePolicy",
+            "PolicyArn": "arn:aws:iam::aws:policy/aws-service-role/AWSResourceExplorerServiceRolePolicy"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "f1357bbb-da65-4fe1-a101-8bcc93f4a57e",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:48 GMT",
+            "x-amzn-requestid": "f1357bbb-da65-4fe1-a101-8bcc93f4a57e",
+            "content-type": "text/xml",
+            "content-length": "593"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/aws-service-role/support.amazonaws.com/",
+        "RoleName": "AWSServiceRoleForSupport",
+        "RoleId": "AROAUGLNGQFDTLWCK2UQH",
+        "Arn": "arn:aws:iam::288528695623:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+        "CreateDate": "2026-01-02T00:42:51+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "support.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Description": "Enables resource access for AWS to provide billing, administrative and support services",
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "1cfd01ff-07a7-4ba3-b18e-1950aba061b6",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:48 GMT",
+            "x-amzn-requestid": "1cfd01ff-07a7-4ba3-b18e-1950aba061b6",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "AWSSupportServiceRolePolicy",
+            "PolicyArn": "arn:aws:iam::aws:policy/aws-service-role/AWSSupportServiceRolePolicy"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "ce628d5a-90ac-449d-93ae-a5bf189c507d",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:49 GMT",
+            "x-amzn-requestid": "ce628d5a-90ac-449d-93ae-a5bf189c507d",
+            "content-type": "text/xml",
+            "content-length": "575"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/aws-service-role/trustedadvisor.amazonaws.com/",
+        "RoleName": "AWSServiceRoleForTrustedAdvisor",
+        "RoleId": "AROAUGLNGQFDVKFH4KTGX",
+        "Arn": "arn:aws:iam::288528695623:role/aws-service-role/trustedadvisor.amazonaws.com/AWSServiceRoleForTrustedAdvisor",
+        "CreateDate": "2026-01-02T00:42:51+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "trustedadvisor.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "Description": "Access for the AWS Trusted Advisor Service to help reduce cost, increase performance, and improve security of your AWS environment.",
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "d61f65d5-4f0d-4074-bebc-acd4447ed47b",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:49 GMT",
+            "x-amzn-requestid": "d61f65d5-4f0d-4074-bebc-acd4447ed47b",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "AWSTrustedAdvisorServiceRolePolicy",
+            "PolicyArn": "arn:aws:iam::aws:policy/aws-service-role/AWSTrustedAdvisorServiceRolePolicy"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "33694e00-d12c-4364-abaa-c20e4f5362c6",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:49 GMT",
+            "x-amzn-requestid": "33694e00-d12c-4364-abaa-c20e4f5362c6",
+            "content-type": "text/xml",
+            "content-length": "589"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/",
+        "RoleName": "cg-sqs-lambda-cgid7vg6yu5rd0",
+        "RoleId": "AROAUGLNGQFD3XQI5MTVM",
+        "Arn": "arn:aws:iam::288528695623:role/cg-sqs-lambda-cgid7vg6yu5rd0",
+        "CreateDate": "2026-01-15T05:19:00+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "897628b8-b59f-49f8-b0e2-4ed4bcc68171",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:49 GMT",
+            "x-amzn-requestid": "897628b8-b59f-49f8-b0e2-4ed4bcc68171",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "AWSLambdaSQSQueueExecutionRole",
+            "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaSQSQueueExecutionRole"
+          },
+          {
+            "PolicyName": "AWSLambdaVPCAccessExecutionRole",
+            "PolicyArn": "arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "0f3eda15-4c9c-4164-b8ce-5ab3bd0ed36e",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:49 GMT",
+            "x-amzn-requestid": "0f3eda15-4c9c-4164-b8ce-5ab3bd0ed36e",
+            "content-type": "text/xml",
+            "content-length": "773"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/",
+        "RoleName": "cg-sqs-send-message-cgid7vg6yu5rd0",
+        "RoleId": "AROAUGLNGQFD3LSQM75LF",
+        "Arn": "arn:aws:iam::288528695623:role/cg-sqs-send-message-cgid7vg6yu5rd0",
+        "CreateDate": "2026-01-15T05:19:09+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "AWS": "arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [
+          "cg-sqs"
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "19d16b6f-ad4c-4b57-8999-d021df4c29d8",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:50 GMT",
+            "x-amzn-requestid": "19d16b6f-ad4c-4b57-8999-d021df4c29d8",
+            "content-type": "text/xml",
+            "content-length": "371"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "98b2a9a7-e209-482e-a3b1-801404d09ce6",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:50 GMT",
+            "x-amzn-requestid": "98b2a9a7-e209-482e-a3b1-801404d09ce6",
+            "content-type": "text/xml",
+            "content-length": "360"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    {
+      "Role": {
+        "Path": "/",
+        "RoleName": "mbvEC2Role",
+        "RoleId": "AROAUGLNGQFD22TECSYHS",
+        "Arn": "arn:aws:iam::288528695623:role/mbvEC2Role",
+        "CreateDate": "2026-01-11T13:27:53+00:00",
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "ec2.amazonaws.com"
+              },
+              "Action": "sts:AssumeRole"
+            }
+          ]
+        },
+        "MaxSessionDuration": 3600
+      },
+      "RoleInlinePolicies": {
+        "PolicyNames": [],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "c51490c5-3ada-4031-bd87-af0ef9fe6a32",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:50 GMT",
+            "x-amzn-requestid": "c51490c5-3ada-4031-bd87-af0ef9fe6a32",
+            "content-type": "text/xml",
+            "content-length": "323"
+          },
+          "RetryAttempts": 0
+        }
+      },
+      "RoleAttachedManagedPolicies": {
+        "AttachedPolicies": [
+          {
+            "PolicyName": "mbvEC2Policy",
+            "PolicyArn": "arn:aws:iam::288528695623:policy/mbvEC2Policy"
+          },
+          {
+            "PolicyName": "AmazonBedrockFullAccess",
+            "PolicyArn": "arn:aws:iam::aws:policy/AmazonBedrockFullAccess"
+          }
+        ],
+        "IsTruncated": false,
+        "ResponseMetadata": {
+          "RequestId": "6bf3462f-58a6-48d8-bd7f-e0bed50961c1",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "date": "Fri, 16 Jan 2026 02:13:50 GMT",
+            "x-amzn-requestid": "6bf3462f-58a6-48d8-bd7f-e0bed50961c1",
+            "content-type": "text/xml",
+            "content-length": "704"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    }
+  ],
+  "Errors": []
+}

@@ -1,0 +1,159 @@
+{
+  "Roles": [
+    {
+      "Path": "/aws-service-role/rds.amazonaws.com/",
+      "RoleName": "AWSServiceRoleForRDS",
+      "RoleId": "AROAUGLNGQFDWAUXYD5QF",
+      "Arn": "arn:aws:iam::288528695623:role/aws-service-role/rds.amazonaws.com/AWSServiceRoleForRDS",
+      "CreateDate": "2026-01-03T13:31:28+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "rds.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "Description": "Allows Amazon RDS to manage AWS resources on your behalf",
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/aws-service-role/resource-explorer-2.amazonaws.com/",
+      "RoleName": "AWSServiceRoleForResourceExplorer",
+      "RoleId": "AROAUGLNGQFD5V75NESDU",
+      "Arn": "arn:aws:iam::288528695623:role/aws-service-role/resource-explorer-2.amazonaws.com/AWSServiceRoleForResourceExplorer",
+      "CreateDate": "2026-01-09T15:33:41+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "resource-explorer-2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/aws-service-role/support.amazonaws.com/",
+      "RoleName": "AWSServiceRoleForSupport",
+      "RoleId": "AROAUGLNGQFDTLWCK2UQH",
+      "Arn": "arn:aws:iam::288528695623:role/aws-service-role/support.amazonaws.com/AWSServiceRoleForSupport",
+      "CreateDate": "2026-01-02T00:42:51+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "support.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "Description": "Enables resource access for AWS to provide billing, administrative and support services",
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/aws-service-role/trustedadvisor.amazonaws.com/",
+      "RoleName": "AWSServiceRoleForTrustedAdvisor",
+      "RoleId": "AROAUGLNGQFDVKFH4KTGX",
+      "Arn": "arn:aws:iam::288528695623:role/aws-service-role/trustedadvisor.amazonaws.com/AWSServiceRoleForTrustedAdvisor",
+      "CreateDate": "2026-01-02T00:42:51+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "trustedadvisor.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "Description": "Access for the AWS Trusted Advisor Service to help reduce cost, increase performance, and improve security of your AWS environment.",
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/",
+      "RoleName": "cg-sqs-lambda-cgid7vg6yu5rd0",
+      "RoleId": "AROAUGLNGQFD3XQI5MTVM",
+      "Arn": "arn:aws:iam::288528695623:role/cg-sqs-lambda-cgid7vg6yu5rd0",
+      "CreateDate": "2026-01-15T05:19:00+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "lambda.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/",
+      "RoleName": "cg-sqs-send-message-cgid7vg6yu5rd0",
+      "RoleId": "AROAUGLNGQFD3LSQM75LF",
+      "Arn": "arn:aws:iam::288528695623:role/cg-sqs-send-message-cgid7vg6yu5rd0",
+      "CreateDate": "2026-01-15T05:19:09+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "MaxSessionDuration": 3600
+    },
+    {
+      "Path": "/",
+      "RoleName": "mbvEC2Role",
+      "RoleId": "AROAUGLNGQFD22TECSYHS",
+      "Arn": "arn:aws:iam::288528695623:role/mbvEC2Role",
+      "CreateDate": "2026-01-11T13:27:53+00:00",
+      "AssumeRolePolicyDocument": {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "ec2.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole"
+          }
+        ]
+      },
+      "MaxSessionDuration": 3600
+    }
+  ],
+  "IsTruncated": false,
+  "ResponseMetadata": {
+    "RequestId": "398b2b09-460a-4072-a4cc-095acaa29a33",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "date": "Fri, 16 Jan 2026 01:44:59 GMT",
+      "x-amzn-requestid": "398b2b09-460a-4072-a4cc-095acaa29a33",
+      "content-type": "text/xml",
+      "content-length": "5352"
+    },
+    "RetryAttempts": 0
+  }
+}

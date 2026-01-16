@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "dump_utc": "20260115T061914Z",
+    "region": "ap-northeast-1",
+    "service": "lambda"
+  },
+  "data": {
+    "list_functions": {
+      "ok": true,
+      "label": "lambda.list_functions",
+      "data": {
+        "op": "list_functions",
+        "mode": "paginated_merge",
+        "result_key": "Functions",
+        "items": [],
+        "raw_pages": [
+          {
+            "ResponseMetadata": {
+              "RequestId": "8a29c701-b266-40d8-8f24-a5247628c316",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "date": "Thu, 15 Jan 2026 06:19:22 GMT",
+                "content-type": "application/json",
+                "content-length": "34",
+                "connection": "keep-alive",
+                "x-amzn-requestid": "8a29c701-b266-40d8-8f24-a5247628c316"
+              },
+              "RetryAttempts": 0
+            },
+            "Functions": []
+          }
+        ]
+      }
+    },
+    "list_event_source_mappings": {
+      "ok": true,
+      "label": "lambda.list_event_source_mappings",
+      "data": {
+        "op": "list_event_source_mappings",
+        "mode": "paginated_merge",
+        "result_key": "EventSourceMappings",
+        "items": [],
+        "raw_pages": [
+          {
+            "ResponseMetadata": {
+              "RequestId": "3c3e11b0-6a72-4e64-8e9e-1c237a0ea052",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "date": "Thu, 15 Jan 2026 06:19:22 GMT",
+                "content-type": "application/json",
+                "content-length": "44",
+                "connection": "keep-alive",
+                "x-amzn-requestid": "3c3e11b0-6a72-4e64-8e9e-1c237a0ea052"
+              },
+              "RetryAttempts": 0
+            },
+            "EventSourceMappings": []
+          }
+        ]
+      }
+    }
+  }
+}

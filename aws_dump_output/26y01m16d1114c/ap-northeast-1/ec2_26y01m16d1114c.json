@@ -1,0 +1,1633 @@
+{
+  "meta": {
+    "dump_utc": "26y01m16d1114c",
+    "region": "ap-northeast-1",
+    "service": "ec2"
+  },
+  "data": {
+    "describe_instances": {
+      "ok": true,
+      "label": "ec2.describe_instances",
+      "data": {
+        "op": "describe_instances",
+        "mode": "paginated_pages",
+        "pages": [
+          {
+            "Reservations": [
+              {
+                "ReservationId": "r-0248b2001b44c181f",
+                "OwnerId": "288528695623",
+                "Groups": [],
+                "Instances": [
+                  {
+                    "Architecture": "x86_64",
+                    "BlockDeviceMappings": [
+                      {
+                        "DeviceName": "/dev/sda1",
+                        "Ebs": {
+                          "AttachTime": "2026-01-11 13:28:09+00:00",
+                          "DeleteOnTermination": true,
+                          "Status": "attached",
+                          "VolumeId": "vol-0b42c6286b2dbe722"
+                        }
+                      }
+                    ],
+                    "ClientToken": "terraform-20260111132807182400000002",
+                    "EbsOptimized": false,
+                    "EnaSupport": true,
+                    "Hypervisor": "xen",
+                    "IamInstanceProfile": {
+                      "Arn": "arn:aws:iam::288528695623:instance-profile/mbvEC2InstanceProfile",
+                      "Id": "AIPAUGLNGQFDVCL676LMH"
+                    },
+                    "NetworkInterfaces": [
+                      {
+                        "Association": {
+                          "IpOwnerId": "288528695623",
+                          "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                          "PublicIp": "57.183.63.211"
+                        },
+                        "Attachment": {
+                          "AttachTime": "2026-01-11 13:28:08+00:00",
+                          "AttachmentId": "eni-attach-057501e0eeaa66b3f",
+                          "DeleteOnTermination": true,
+                          "DeviceIndex": 0,
+                          "Status": "attached",
+                          "NetworkCardIndex": 0
+                        },
+                        "Description": "",
+                        "Groups": [
+                          {
+                            "GroupId": "sg-09e795aaf360ea2b4",
+                            "GroupName": "mbv-sg"
+                          }
+                        ],
+                        "Ipv6Addresses": [],
+                        "MacAddress": "06:42:0e:dd:72:39",
+                        "NetworkInterfaceId": "eni-0f7fc470eea04bc53",
+                        "OwnerId": "288528695623",
+                        "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                        "PrivateIpAddress": "10.0.1.104",
+                        "PrivateIpAddresses": [
+                          {
+                            "Association": {
+                              "IpOwnerId": "288528695623",
+                              "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                              "PublicIp": "57.183.63.211"
+                            },
+                            "Primary": true,
+                            "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                            "PrivateIpAddress": "10.0.1.104"
+                          }
+                        ],
+                        "SourceDestCheck": true,
+                        "Status": "in-use",
+                        "SubnetId": "subnet-074c905b8e1b4fefb",
+                        "VpcId": "vpc-03695aa3e3bef0580",
+                        "InterfaceType": "interface",
+                        "Operator": {
+                          "Managed": false
+                        }
+                      }
+                    ],
+                    "RootDeviceName": "/dev/sda1",
+                    "RootDeviceType": "ebs",
+                    "SecurityGroups": [
+                      {
+                        "GroupId": "sg-09e795aaf360ea2b4",
+                        "GroupName": "mbv-sg"
+                      }
+                    ],
+                    "SourceDestCheck": true,
+                    "StateReason": {
+                      "Code": "Client.UserInitiatedShutdown",
+                      "Message": "Client.UserInitiatedShutdown: User initiated shutdown"
+                    },
+                    "Tags": [
+                      {
+                        "Key": "Name",
+                        "Value": "mbv-ai"
+                      }
+                    ],
+                    "VirtualizationType": "hvm",
+                    "CpuOptions": {
+                      "CoreCount": 1,
+                      "ThreadsPerCore": 2
+                    },
+                    "CapacityReservationSpecification": {
+                      "CapacityReservationPreference": "open"
+                    },
+                    "HibernationOptions": {
+                      "Configured": false
+                    },
+                    "MetadataOptions": {
+                      "State": "applied",
+                      "HttpTokens": "required",
+                      "HttpPutResponseHopLimit": 2,
+                      "HttpEndpoint": "enabled",
+                      "HttpProtocolIpv6": "disabled",
+                      "InstanceMetadataTags": "disabled"
+                    },
+                    "EnclaveOptions": {
+                      "Enabled": false
+                    },
+                    "BootMode": "uefi-preferred",
+                    "PlatformDetails": "Linux/UNIX",
+                    "UsageOperation": "RunInstances",
+                    "UsageOperationUpdateTime": "2026-01-11 13:28:08+00:00",
+                    "PrivateDnsNameOptions": {
+                      "HostnameType": "ip-name",
+                      "EnableResourceNameDnsARecord": false,
+                      "EnableResourceNameDnsAAAARecord": false
+                    },
+                    "MaintenanceOptions": {
+                      "AutoRecovery": "default",
+                      "RebootMigration": "default"
+                    },
+                    "CurrentInstanceBootMode": "uefi",
+                    "NetworkPerformanceOptions": {
+                      "BandwidthWeighting": "default"
+                    },
+                    "Operator": {
+                      "Managed": false
+                    },
+                    "InstanceId": "i-038d819880f501c6c",
+                    "ImageId": "ami-0aec5ae807cea9ce0",
+                    "State": {
+                      "Code": 80,
+                      "Name": "stopped"
+                    },
+                    "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                    "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                    "StateTransitionReason": "User initiated (2026-01-15 07:01:29 GMT)",
+                    "KeyName": "mbv-key",
+                    "AmiLaunchIndex": 0,
+                    "ProductCodes": [],
+                    "InstanceType": "t3.micro",
+                    "LaunchTime": "2026-01-15 05:28:32+00:00",
+                    "Placement": {
+                      "AvailabilityZoneId": "apne1-az4",
+                      "GroupName": "",
+                      "Tenancy": "default",
+                      "AvailabilityZone": "ap-northeast-1a"
+                    },
+                    "Monitoring": {
+                      "State": "disabled"
+                    },
+                    "SubnetId": "subnet-074c905b8e1b4fefb",
+                    "VpcId": "vpc-03695aa3e3bef0580",
+                    "PrivateIpAddress": "10.0.1.104",
+                    "PublicIpAddress": "57.183.63.211"
+                  }
+                ]
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "92e249e3-26b6-4999-a9e4-08d04d9f3cda",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "92e249e3-26b6-4999-a9e4-08d04d9f3cda",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "5781",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_vpcs": {
+      "ok": true,
+      "label": "ec2.describe_vpcs",
+      "data": {
+        "op": "describe_vpcs",
+        "mode": "paginated_merge",
+        "result_key": "Vpcs",
+        "items": [
+          {
+            "OwnerId": "288528695623",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-0a0c5a739e5bd3906",
+                "CidrBlock": "10.0.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "IsDefault": false,
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "mbv-VPC"
+              }
+            ],
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "State": "available",
+            "CidrBlock": "10.0.0.0/16",
+            "DhcpOptionsId": "dopt-091004d1a6e094a7e"
+          },
+          {
+            "OwnerId": "288528695623",
+            "InstanceTenancy": "default",
+            "CidrBlockAssociationSet": [
+              {
+                "AssociationId": "vpc-cidr-assoc-05d3639d557597379",
+                "CidrBlock": "172.31.0.0/16",
+                "CidrBlockState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "IsDefault": true,
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "VpcId": "vpc-0135d77d661646be3",
+            "State": "available",
+            "CidrBlock": "172.31.0.0/16",
+            "DhcpOptionsId": "dopt-091004d1a6e094a7e"
+          }
+        ],
+        "raw_pages": [
+          {
+            "Vpcs": [
+              {
+                "OwnerId": "288528695623",
+                "InstanceTenancy": "default",
+                "CidrBlockAssociationSet": [
+                  {
+                    "AssociationId": "vpc-cidr-assoc-0a0c5a739e5bd3906",
+                    "CidrBlock": "10.0.0.0/16",
+                    "CidrBlockState": {
+                      "State": "associated"
+                    }
+                  }
+                ],
+                "IsDefault": false,
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "mbv-VPC"
+                  }
+                ],
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "State": "available",
+                "CidrBlock": "10.0.0.0/16",
+                "DhcpOptionsId": "dopt-091004d1a6e094a7e"
+              },
+              {
+                "OwnerId": "288528695623",
+                "InstanceTenancy": "default",
+                "CidrBlockAssociationSet": [
+                  {
+                    "AssociationId": "vpc-cidr-assoc-05d3639d557597379",
+                    "CidrBlock": "172.31.0.0/16",
+                    "CidrBlockState": {
+                      "State": "associated"
+                    }
+                  }
+                ],
+                "IsDefault": true,
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "VpcId": "vpc-0135d77d661646be3",
+                "State": "available",
+                "CidrBlock": "172.31.0.0/16",
+                "DhcpOptionsId": "dopt-091004d1a6e094a7e"
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "eeb13e6c-d285-4952-b256-dbbfbb1ef225",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "eeb13e6c-d285-4952-b256-dbbfbb1ef225",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "1453",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_subnets": {
+      "ok": true,
+      "label": "ec2.describe_subnets",
+      "data": {
+        "op": "describe_subnets",
+        "mode": "paginated_merge",
+        "result_key": "Subnets",
+        "items": [
+          {
+            "AvailabilityZoneId": "apne1-az2",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "288528695623",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-0b9029e3e9b7da057",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+              "HostnameType": "ip-name",
+              "EnableResourceNameDnsARecord": false,
+              "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-0b9029e3e9b7da057",
+            "State": "available",
+            "VpcId": "vpc-0135d77d661646be3",
+            "CidrBlock": "172.31.16.0/20",
+            "AvailableIpAddressCount": 4091,
+            "AvailabilityZone": "ap-northeast-1d",
+            "DefaultForAz": true,
+            "MapPublicIpOnLaunch": true
+          },
+          {
+            "AvailabilityZoneId": "apne1-az1",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "288528695623",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-087fa5c035bccf706",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+              "HostnameType": "ip-name",
+              "EnableResourceNameDnsARecord": false,
+              "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-087fa5c035bccf706",
+            "State": "available",
+            "VpcId": "vpc-0135d77d661646be3",
+            "CidrBlock": "172.31.0.0/20",
+            "AvailableIpAddressCount": 4091,
+            "AvailabilityZone": "ap-northeast-1c",
+            "DefaultForAz": true,
+            "MapPublicIpOnLaunch": true
+          },
+          {
+            "AvailabilityZoneId": "apne1-az4",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "288528695623",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "mbv-public-subnet-01"
+              },
+              {
+                "Key": "Type",
+                "Value": "Public"
+              }
+            ],
+            "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-074c905b8e1b4fefb",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+              "HostnameType": "ip-name",
+              "EnableResourceNameDnsARecord": false,
+              "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-074c905b8e1b4fefb",
+            "State": "available",
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "CidrBlock": "10.0.1.0/24",
+            "AvailableIpAddressCount": 250,
+            "AvailabilityZone": "ap-northeast-1a",
+            "DefaultForAz": false,
+            "MapPublicIpOnLaunch": false
+          },
+          {
+            "AvailabilityZoneId": "apne1-az4",
+            "MapCustomerOwnedIpOnLaunch": false,
+            "OwnerId": "288528695623",
+            "AssignIpv6AddressOnCreation": false,
+            "Ipv6CidrBlockAssociationSet": [],
+            "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-0ee55ad284f630f09",
+            "EnableDns64": false,
+            "Ipv6Native": false,
+            "PrivateDnsNameOptionsOnLaunch": {
+              "HostnameType": "ip-name",
+              "EnableResourceNameDnsARecord": false,
+              "EnableResourceNameDnsAAAARecord": false
+            },
+            "BlockPublicAccessStates": {
+              "InternetGatewayBlockMode": "off"
+            },
+            "SubnetId": "subnet-0ee55ad284f630f09",
+            "State": "available",
+            "VpcId": "vpc-0135d77d661646be3",
+            "CidrBlock": "172.31.32.0/20",
+            "AvailableIpAddressCount": 4091,
+            "AvailabilityZone": "ap-northeast-1a",
+            "DefaultForAz": true,
+            "MapPublicIpOnLaunch": true
+          }
+        ],
+        "raw_pages": [
+          {
+            "Subnets": [
+              {
+                "AvailabilityZoneId": "apne1-az2",
+                "MapCustomerOwnedIpOnLaunch": false,
+                "OwnerId": "288528695623",
+                "AssignIpv6AddressOnCreation": false,
+                "Ipv6CidrBlockAssociationSet": [],
+                "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-0b9029e3e9b7da057",
+                "EnableDns64": false,
+                "Ipv6Native": false,
+                "PrivateDnsNameOptionsOnLaunch": {
+                  "HostnameType": "ip-name",
+                  "EnableResourceNameDnsARecord": false,
+                  "EnableResourceNameDnsAAAARecord": false
+                },
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "SubnetId": "subnet-0b9029e3e9b7da057",
+                "State": "available",
+                "VpcId": "vpc-0135d77d661646be3",
+                "CidrBlock": "172.31.16.0/20",
+                "AvailableIpAddressCount": 4091,
+                "AvailabilityZone": "ap-northeast-1d",
+                "DefaultForAz": true,
+                "MapPublicIpOnLaunch": true
+              },
+              {
+                "AvailabilityZoneId": "apne1-az1",
+                "MapCustomerOwnedIpOnLaunch": false,
+                "OwnerId": "288528695623",
+                "AssignIpv6AddressOnCreation": false,
+                "Ipv6CidrBlockAssociationSet": [],
+                "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-087fa5c035bccf706",
+                "EnableDns64": false,
+                "Ipv6Native": false,
+                "PrivateDnsNameOptionsOnLaunch": {
+                  "HostnameType": "ip-name",
+                  "EnableResourceNameDnsARecord": false,
+                  "EnableResourceNameDnsAAAARecord": false
+                },
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "SubnetId": "subnet-087fa5c035bccf706",
+                "State": "available",
+                "VpcId": "vpc-0135d77d661646be3",
+                "CidrBlock": "172.31.0.0/20",
+                "AvailableIpAddressCount": 4091,
+                "AvailabilityZone": "ap-northeast-1c",
+                "DefaultForAz": true,
+                "MapPublicIpOnLaunch": true
+              },
+              {
+                "AvailabilityZoneId": "apne1-az4",
+                "MapCustomerOwnedIpOnLaunch": false,
+                "OwnerId": "288528695623",
+                "AssignIpv6AddressOnCreation": false,
+                "Ipv6CidrBlockAssociationSet": [],
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "mbv-public-subnet-01"
+                  },
+                  {
+                    "Key": "Type",
+                    "Value": "Public"
+                  }
+                ],
+                "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-074c905b8e1b4fefb",
+                "EnableDns64": false,
+                "Ipv6Native": false,
+                "PrivateDnsNameOptionsOnLaunch": {
+                  "HostnameType": "ip-name",
+                  "EnableResourceNameDnsARecord": false,
+                  "EnableResourceNameDnsAAAARecord": false
+                },
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "SubnetId": "subnet-074c905b8e1b4fefb",
+                "State": "available",
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "CidrBlock": "10.0.1.0/24",
+                "AvailableIpAddressCount": 250,
+                "AvailabilityZone": "ap-northeast-1a",
+                "DefaultForAz": false,
+                "MapPublicIpOnLaunch": false
+              },
+              {
+                "AvailabilityZoneId": "apne1-az4",
+                "MapCustomerOwnedIpOnLaunch": false,
+                "OwnerId": "288528695623",
+                "AssignIpv6AddressOnCreation": false,
+                "Ipv6CidrBlockAssociationSet": [],
+                "SubnetArn": "arn:aws:ec2:ap-northeast-1:288528695623:subnet/subnet-0ee55ad284f630f09",
+                "EnableDns64": false,
+                "Ipv6Native": false,
+                "PrivateDnsNameOptionsOnLaunch": {
+                  "HostnameType": "ip-name",
+                  "EnableResourceNameDnsARecord": false,
+                  "EnableResourceNameDnsAAAARecord": false
+                },
+                "BlockPublicAccessStates": {
+                  "InternetGatewayBlockMode": "off"
+                },
+                "SubnetId": "subnet-0ee55ad284f630f09",
+                "State": "available",
+                "VpcId": "vpc-0135d77d661646be3",
+                "CidrBlock": "172.31.32.0/20",
+                "AvailableIpAddressCount": 4091,
+                "AvailabilityZone": "ap-northeast-1a",
+                "DefaultForAz": true,
+                "MapPublicIpOnLaunch": true
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "0005d1f9-e224-4079-95b1-7094159ab9af",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "0005d1f9-e224-4079-95b1-7094159ab9af",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "4663",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_security_groups": {
+      "ok": true,
+      "label": "ec2.describe_security_groups",
+      "data": {
+        "op": "describe_security_groups",
+        "mode": "paginated_merge",
+        "result_key": "SecurityGroups",
+        "items": [
+          {
+            "GroupId": "sg-09e795aaf360ea2b4",
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-09e795aaf360ea2b4",
+            "OwnerId": "288528695623",
+            "GroupName": "mbv-sg",
+            "Description": "MBV Security Group",
+            "IpPermissions": [
+              {
+                "IpProtocol": "tcp",
+                "FromPort": 80,
+                "ToPort": 80,
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              },
+              {
+                "IpProtocol": "tcp",
+                "FromPort": 22,
+                "ToPort": 22,
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              },
+              {
+                "IpProtocol": "tcp",
+                "FromPort": 6333,
+                "ToPort": 6333,
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              },
+              {
+                "IpProtocol": "tcp",
+                "FromPort": 443,
+                "ToPort": 443,
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ]
+          },
+          {
+            "GroupId": "sg-0b58f972c3058f20d",
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-0b58f972c3058f20d",
+            "OwnerId": "288528695623",
+            "GroupName": "default",
+            "Description": "default VPC security group",
+            "IpPermissions": [
+              {
+                "IpProtocol": "-1",
+                "UserIdGroupPairs": [
+                  {
+                    "UserId": "288528695623",
+                    "GroupId": "sg-0b58f972c3058f20d"
+                  }
+                ],
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ]
+          },
+          {
+            "GroupId": "sg-08272150a907644bc",
+            "IpPermissionsEgress": [
+              {
+                "IpProtocol": "-1",
+                "UserIdGroupPairs": [],
+                "IpRanges": [
+                  {
+                    "CidrIp": "0.0.0.0/0"
+                  }
+                ],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ],
+            "VpcId": "vpc-0135d77d661646be3",
+            "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-08272150a907644bc",
+            "OwnerId": "288528695623",
+            "GroupName": "default",
+            "Description": "default VPC security group",
+            "IpPermissions": [
+              {
+                "IpProtocol": "-1",
+                "UserIdGroupPairs": [
+                  {
+                    "UserId": "288528695623",
+                    "GroupId": "sg-08272150a907644bc"
+                  }
+                ],
+                "IpRanges": [],
+                "Ipv6Ranges": [],
+                "PrefixListIds": []
+              }
+            ]
+          }
+        ],
+        "raw_pages": [
+          {
+            "SecurityGroups": [
+              {
+                "GroupId": "sg-09e795aaf360ea2b4",
+                "IpPermissionsEgress": [
+                  {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-09e795aaf360ea2b4",
+                "OwnerId": "288528695623",
+                "GroupName": "mbv-sg",
+                "Description": "MBV Security Group",
+                "IpPermissions": [
+                  {
+                    "IpProtocol": "tcp",
+                    "FromPort": 80,
+                    "ToPort": 80,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  },
+                  {
+                    "IpProtocol": "tcp",
+                    "FromPort": 22,
+                    "ToPort": 22,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  },
+                  {
+                    "IpProtocol": "tcp",
+                    "FromPort": 6333,
+                    "ToPort": 6333,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  },
+                  {
+                    "IpProtocol": "tcp",
+                    "FromPort": 443,
+                    "ToPort": 443,
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ]
+              },
+              {
+                "GroupId": "sg-0b58f972c3058f20d",
+                "IpPermissionsEgress": [
+                  {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-0b58f972c3058f20d",
+                "OwnerId": "288528695623",
+                "GroupName": "default",
+                "Description": "default VPC security group",
+                "IpPermissions": [
+                  {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [
+                      {
+                        "UserId": "288528695623",
+                        "GroupId": "sg-0b58f972c3058f20d"
+                      }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ]
+              },
+              {
+                "GroupId": "sg-08272150a907644bc",
+                "IpPermissionsEgress": [
+                  {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [],
+                    "IpRanges": [
+                      {
+                        "CidrIp": "0.0.0.0/0"
+                      }
+                    ],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ],
+                "VpcId": "vpc-0135d77d661646be3",
+                "SecurityGroupArn": "arn:aws:ec2:ap-northeast-1:288528695623:security-group/sg-08272150a907644bc",
+                "OwnerId": "288528695623",
+                "GroupName": "default",
+                "Description": "default VPC security group",
+                "IpPermissions": [
+                  {
+                    "IpProtocol": "-1",
+                    "UserIdGroupPairs": [
+                      {
+                        "UserId": "288528695623",
+                        "GroupId": "sg-08272150a907644bc"
+                      }
+                    ],
+                    "IpRanges": [],
+                    "Ipv6Ranges": [],
+                    "PrefixListIds": []
+                  }
+                ]
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "cde0bf5f-b50c-4c97-ac1a-90d714eb34f5",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "cde0bf5f-b50c-4c97-ac1a-90d714eb34f5",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "2936",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_route_tables": {
+      "ok": true,
+      "label": "ec2.describe_route_tables",
+      "data": {
+        "op": "describe_route_tables",
+        "mode": "paginated_merge",
+        "result_key": "RouteTables",
+        "items": [
+          {
+            "Associations": [
+              {
+                "Main": false,
+                "RouteTableAssociationId": "rtbassoc-04ed3649788227ee0",
+                "RouteTableId": "rtb-0b9bcd32c9171bda3",
+                "SubnetId": "subnet-074c905b8e1b4fefb",
+                "AssociationState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-0b9bcd32c9171bda3",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+              },
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": "igw-0b76d63f39e01ffb2",
+                "Origin": "CreateRoute",
+                "State": "active"
+              }
+            ],
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "mbv-public-route"
+              }
+            ],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "OwnerId": "288528695623"
+          },
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-0423244c4e010f310",
+                "RouteTableId": "rtb-05c0e86a113ac1b16",
+                "AssociationState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-05c0e86a113ac1b16",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "172.31.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+              },
+              {
+                "DestinationCidrBlock": "0.0.0.0/0",
+                "GatewayId": "igw-0e8bd726cc99382e5",
+                "Origin": "CreateRoute",
+                "State": "active"
+              }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-0135d77d661646be3",
+            "OwnerId": "288528695623"
+          },
+          {
+            "Associations": [
+              {
+                "Main": true,
+                "RouteTableAssociationId": "rtbassoc-03a672a488e364391",
+                "RouteTableId": "rtb-014263c45808f52cc",
+                "AssociationState": {
+                  "State": "associated"
+                }
+              }
+            ],
+            "PropagatingVgws": [],
+            "RouteTableId": "rtb-014263c45808f52cc",
+            "Routes": [
+              {
+                "DestinationCidrBlock": "10.0.0.0/16",
+                "GatewayId": "local",
+                "Origin": "CreateRouteTable",
+                "State": "active"
+              }
+            ],
+            "Tags": [],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "OwnerId": "288528695623"
+          }
+        ],
+        "raw_pages": [
+          {
+            "RouteTables": [
+              {
+                "Associations": [
+                  {
+                    "Main": false,
+                    "RouteTableAssociationId": "rtbassoc-04ed3649788227ee0",
+                    "RouteTableId": "rtb-0b9bcd32c9171bda3",
+                    "SubnetId": "subnet-074c905b8e1b4fefb",
+                    "AssociationState": {
+                      "State": "associated"
+                    }
+                  }
+                ],
+                "PropagatingVgws": [],
+                "RouteTableId": "rtb-0b9bcd32c9171bda3",
+                "Routes": [
+                  {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                  },
+                  {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-0b76d63f39e01ffb2",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                  }
+                ],
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "mbv-public-route"
+                  }
+                ],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "OwnerId": "288528695623"
+              },
+              {
+                "Associations": [
+                  {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-0423244c4e010f310",
+                    "RouteTableId": "rtb-05c0e86a113ac1b16",
+                    "AssociationState": {
+                      "State": "associated"
+                    }
+                  }
+                ],
+                "PropagatingVgws": [],
+                "RouteTableId": "rtb-05c0e86a113ac1b16",
+                "Routes": [
+                  {
+                    "DestinationCidrBlock": "172.31.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                  },
+                  {
+                    "DestinationCidrBlock": "0.0.0.0/0",
+                    "GatewayId": "igw-0e8bd726cc99382e5",
+                    "Origin": "CreateRoute",
+                    "State": "active"
+                  }
+                ],
+                "Tags": [],
+                "VpcId": "vpc-0135d77d661646be3",
+                "OwnerId": "288528695623"
+              },
+              {
+                "Associations": [
+                  {
+                    "Main": true,
+                    "RouteTableAssociationId": "rtbassoc-03a672a488e364391",
+                    "RouteTableId": "rtb-014263c45808f52cc",
+                    "AssociationState": {
+                      "State": "associated"
+                    }
+                  }
+                ],
+                "PropagatingVgws": [],
+                "RouteTableId": "rtb-014263c45808f52cc",
+                "Routes": [
+                  {
+                    "DestinationCidrBlock": "10.0.0.0/16",
+                    "GatewayId": "local",
+                    "Origin": "CreateRouteTable",
+                    "State": "active"
+                  }
+                ],
+                "Tags": [],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "OwnerId": "288528695623"
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "2a17fee3-1d57-4610-8e02-e115f0015474",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "2a17fee3-1d57-4610-8e02-e115f0015474",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "2421",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_network_acls": {
+      "ok": true,
+      "label": "ec2.describe_network_acls",
+      "data": {
+        "op": "describe_network_acls",
+        "mode": "paginated_merge",
+        "result_key": "NetworkAcls",
+        "items": [
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-0df9bcbe81d7f5907",
+                "NetworkAclId": "acl-085623978e99161c2",
+                "SubnetId": "subnet-074c905b8e1b4fefb"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "RuleNumber": 100
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "RuleNumber": 100
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-085623978e99161c2",
+            "Tags": [],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "OwnerId": "288528695623"
+          },
+          {
+            "Associations": [
+              {
+                "NetworkAclAssociationId": "aclassoc-051a725d5886faf01",
+                "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                "SubnetId": "subnet-0b9029e3e9b7da057"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-0226dcad178f84bc3",
+                "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                "SubnetId": "subnet-087fa5c035bccf706"
+              },
+              {
+                "NetworkAclAssociationId": "aclassoc-0e45d5620a0258c2a",
+                "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                "SubnetId": "subnet-0ee55ad284f630f09"
+              }
+            ],
+            "Entries": [
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "RuleNumber": 100
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": true,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "Protocol": "-1",
+                "RuleAction": "allow",
+                "RuleNumber": 100
+              },
+              {
+                "CidrBlock": "0.0.0.0/0",
+                "Egress": false,
+                "Protocol": "-1",
+                "RuleAction": "deny",
+                "RuleNumber": 32767
+              }
+            ],
+            "IsDefault": true,
+            "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+            "Tags": [],
+            "VpcId": "vpc-0135d77d661646be3",
+            "OwnerId": "288528695623"
+          }
+        ],
+        "raw_pages": [
+          {
+            "NetworkAcls": [
+              {
+                "Associations": [
+                  {
+                    "NetworkAclAssociationId": "aclassoc-0df9bcbe81d7f5907",
+                    "NetworkAclId": "acl-085623978e99161c2",
+                    "SubnetId": "subnet-074c905b8e1b4fefb"
+                  }
+                ],
+                "Entries": [
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": true,
+                    "Protocol": "-1",
+                    "RuleAction": "allow",
+                    "RuleNumber": 100
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": true,
+                    "Protocol": "-1",
+                    "RuleAction": "deny",
+                    "RuleNumber": 32767
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": false,
+                    "Protocol": "-1",
+                    "RuleAction": "allow",
+                    "RuleNumber": 100
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": false,
+                    "Protocol": "-1",
+                    "RuleAction": "deny",
+                    "RuleNumber": 32767
+                  }
+                ],
+                "IsDefault": true,
+                "NetworkAclId": "acl-085623978e99161c2",
+                "Tags": [],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "OwnerId": "288528695623"
+              },
+              {
+                "Associations": [
+                  {
+                    "NetworkAclAssociationId": "aclassoc-051a725d5886faf01",
+                    "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                    "SubnetId": "subnet-0b9029e3e9b7da057"
+                  },
+                  {
+                    "NetworkAclAssociationId": "aclassoc-0226dcad178f84bc3",
+                    "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                    "SubnetId": "subnet-087fa5c035bccf706"
+                  },
+                  {
+                    "NetworkAclAssociationId": "aclassoc-0e45d5620a0258c2a",
+                    "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                    "SubnetId": "subnet-0ee55ad284f630f09"
+                  }
+                ],
+                "Entries": [
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": true,
+                    "Protocol": "-1",
+                    "RuleAction": "allow",
+                    "RuleNumber": 100
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": true,
+                    "Protocol": "-1",
+                    "RuleAction": "deny",
+                    "RuleNumber": 32767
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": false,
+                    "Protocol": "-1",
+                    "RuleAction": "allow",
+                    "RuleNumber": 100
+                  },
+                  {
+                    "CidrBlock": "0.0.0.0/0",
+                    "Egress": false,
+                    "Protocol": "-1",
+                    "RuleAction": "deny",
+                    "RuleNumber": 32767
+                  }
+                ],
+                "IsDefault": true,
+                "NetworkAclId": "acl-0c5d6e9500b27b8b1",
+                "Tags": [],
+                "VpcId": "vpc-0135d77d661646be3",
+                "OwnerId": "288528695623"
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "31ede82e-32b9-4eb6-a39d-08cc2e44e767",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "31ede82e-32b9-4eb6-a39d-08cc2e44e767",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "2593",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_internet_gateways": {
+      "ok": true,
+      "label": "ec2.describe_internet_gateways",
+      "data": {
+        "op": "describe_internet_gateways",
+        "mode": "paginated_merge",
+        "result_key": "InternetGateways",
+        "items": [
+          {
+            "Attachments": [
+              {
+                "State": "available",
+                "VpcId": "vpc-03695aa3e3bef0580"
+              }
+            ],
+            "InternetGatewayId": "igw-0b76d63f39e01ffb2",
+            "OwnerId": "288528695623",
+            "Tags": [
+              {
+                "Key": "Name",
+                "Value": "mbv-internet-gateway"
+              }
+            ]
+          },
+          {
+            "Attachments": [
+              {
+                "State": "available",
+                "VpcId": "vpc-0135d77d661646be3"
+              }
+            ],
+            "InternetGatewayId": "igw-0e8bd726cc99382e5",
+            "OwnerId": "288528695623",
+            "Tags": []
+          }
+        ],
+        "raw_pages": [
+          {
+            "InternetGateways": [
+              {
+                "Attachments": [
+                  {
+                    "State": "available",
+                    "VpcId": "vpc-03695aa3e3bef0580"
+                  }
+                ],
+                "InternetGatewayId": "igw-0b76d63f39e01ffb2",
+                "OwnerId": "288528695623",
+                "Tags": [
+                  {
+                    "Key": "Name",
+                    "Value": "mbv-internet-gateway"
+                  }
+                ]
+              },
+              {
+                "Attachments": [
+                  {
+                    "State": "available",
+                    "VpcId": "vpc-0135d77d661646be3"
+                  }
+                ],
+                "InternetGatewayId": "igw-0e8bd726cc99382e5",
+                "OwnerId": "288528695623",
+                "Tags": []
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "5b610dc8-7896-402e-8944-2d54039f82fe",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "5b610dc8-7896-402e-8944-2d54039f82fe",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "762",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_nat_gateways": {
+      "ok": true,
+      "label": "ec2.describe_nat_gateways",
+      "data": {
+        "op": "describe_nat_gateways",
+        "mode": "paginated_merge",
+        "result_key": "NatGateways",
+        "items": [],
+        "raw_pages": [
+          {
+            "NatGateways": [],
+            "ResponseMetadata": {
+              "RequestId": "75dc8d26-be0e-46f5-9c3a-5f4681ea8921",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "75dc8d26-be0e-46f5-9c3a-5f4681ea8921",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "transfer-encoding": "chunked",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_network_interfaces": {
+      "ok": true,
+      "label": "ec2.describe_network_interfaces",
+      "data": {
+        "op": "describe_network_interfaces",
+        "mode": "paginated_merge",
+        "result_key": "NetworkInterfaces",
+        "items": [
+          {
+            "Association": {
+              "AllocationId": "eipalloc-0a07754cecbba5fd6",
+              "AssociationId": "eipassoc-0f0c3b3013a3f1656",
+              "IpOwnerId": "288528695623",
+              "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+              "PublicIp": "57.183.63.211"
+            },
+            "Attachment": {
+              "AttachTime": "2026-01-11 13:28:08+00:00",
+              "AttachmentId": "eni-attach-057501e0eeaa66b3f",
+              "DeleteOnTermination": true,
+              "DeviceIndex": 0,
+              "NetworkCardIndex": 0,
+              "InstanceId": "i-038d819880f501c6c",
+              "InstanceOwnerId": "288528695623",
+              "Status": "attached"
+            },
+            "AvailabilityZone": "ap-northeast-1a",
+            "Description": "",
+            "Groups": [
+              {
+                "GroupId": "sg-09e795aaf360ea2b4",
+                "GroupName": "mbv-sg"
+              }
+            ],
+            "InterfaceType": "interface",
+            "Ipv6Addresses": [],
+            "MacAddress": "06:42:0e:dd:72:39",
+            "NetworkInterfaceId": "eni-0f7fc470eea04bc53",
+            "OwnerId": "288528695623",
+            "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+            "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+            "PublicIpDnsNameOptions": {
+              "DnsHostnameType": "public-ipv4-dns-name",
+              "PublicIpv4DnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com"
+            },
+            "PrivateIpAddress": "10.0.1.104",
+            "PrivateIpAddresses": [
+              {
+                "Association": {
+                  "AllocationId": "eipalloc-0a07754cecbba5fd6",
+                  "AssociationId": "eipassoc-0f0c3b3013a3f1656",
+                  "IpOwnerId": "288528695623",
+                  "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                  "PublicIp": "57.183.63.211"
+                },
+                "Primary": true,
+                "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                "PrivateIpAddress": "10.0.1.104"
+              }
+            ],
+            "RequesterManaged": false,
+            "SourceDestCheck": true,
+            "Status": "in-use",
+            "SubnetId": "subnet-074c905b8e1b4fefb",
+            "TagSet": [],
+            "VpcId": "vpc-03695aa3e3bef0580",
+            "Operator": {
+              "Managed": false
+            },
+            "AvailabilityZoneId": "apne1-az4"
+          }
+        ],
+        "raw_pages": [
+          {
+            "NetworkInterfaces": [
+              {
+                "Association": {
+                  "AllocationId": "eipalloc-0a07754cecbba5fd6",
+                  "AssociationId": "eipassoc-0f0c3b3013a3f1656",
+                  "IpOwnerId": "288528695623",
+                  "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                  "PublicIp": "57.183.63.211"
+                },
+                "Attachment": {
+                  "AttachTime": "2026-01-11 13:28:08+00:00",
+                  "AttachmentId": "eni-attach-057501e0eeaa66b3f",
+                  "DeleteOnTermination": true,
+                  "DeviceIndex": 0,
+                  "NetworkCardIndex": 0,
+                  "InstanceId": "i-038d819880f501c6c",
+                  "InstanceOwnerId": "288528695623",
+                  "Status": "attached"
+                },
+                "AvailabilityZone": "ap-northeast-1a",
+                "Description": "",
+                "Groups": [
+                  {
+                    "GroupId": "sg-09e795aaf360ea2b4",
+                    "GroupName": "mbv-sg"
+                  }
+                ],
+                "InterfaceType": "interface",
+                "Ipv6Addresses": [],
+                "MacAddress": "06:42:0e:dd:72:39",
+                "NetworkInterfaceId": "eni-0f7fc470eea04bc53",
+                "OwnerId": "288528695623",
+                "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                "PublicIpDnsNameOptions": {
+                  "DnsHostnameType": "public-ipv4-dns-name",
+                  "PublicIpv4DnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com"
+                },
+                "PrivateIpAddress": "10.0.1.104",
+                "PrivateIpAddresses": [
+                  {
+                    "Association": {
+                      "AllocationId": "eipalloc-0a07754cecbba5fd6",
+                      "AssociationId": "eipassoc-0f0c3b3013a3f1656",
+                      "IpOwnerId": "288528695623",
+                      "PublicDnsName": "ec2-57-183-63-211.ap-northeast-1.compute.amazonaws.com",
+                      "PublicIp": "57.183.63.211"
+                    },
+                    "Primary": true,
+                    "PrivateDnsName": "ip-10-0-1-104.ap-northeast-1.compute.internal",
+                    "PrivateIpAddress": "10.0.1.104"
+                  }
+                ],
+                "RequesterManaged": false,
+                "SourceDestCheck": true,
+                "Status": "in-use",
+                "SubnetId": "subnet-074c905b8e1b4fefb",
+                "TagSet": [],
+                "VpcId": "vpc-03695aa3e3bef0580",
+                "Operator": {
+                  "Managed": false
+                },
+                "AvailabilityZoneId": "apne1-az4"
+              }
+            ],
+            "ResponseMetadata": {
+              "RequestId": "d66fe21c-b0f0-49dc-9a18-6ca0005c17c1",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "d66fe21c-b0f0-49dc-9a18-6ca0005c17c1",
+                "cache-control": "no-cache, no-store",
+                "strict-transport-security": "max-age=31536000; includeSubDomains",
+                "vary": "accept-encoding",
+                "content-type": "text/xml;charset=UTF-8",
+                "content-length": "2544",
+                "date": "Fri, 16 Jan 2026 02:14:55 GMT",
+                "server": "AmazonEC2"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    }
+  }
+}

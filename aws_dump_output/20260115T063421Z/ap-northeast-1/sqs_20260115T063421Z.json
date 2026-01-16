@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "dump_utc": "20260115T063421Z",
+    "region": "ap-northeast-1",
+    "service": "sqs"
+  },
+  "data": {
+    "list_queues": {
+      "ok": true,
+      "label": "sqs.list_queues",
+      "data": {
+        "ResponseMetadata": {
+          "RequestId": "0f065d6a-b513-50d6-803b-3c8839bcb881",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "x-amzn-requestid": "0f065d6a-b513-50d6-803b-3c8839bcb881",
+            "date": "Thu, 15 Jan 2026 06:34:23 GMT",
+            "content-type": "application/x-amz-json-1.0",
+            "content-length": "2",
+            "connection": "keep-alive"
+          },
+          "RetryAttempts": 0
+        }
+      }
+    },
+    "get_queue_attributes_all": {
+      "ok": true,
+      "label": "sqs.get_queue_attributes(All)",
+      "data": {
+        "queues": [],
+        "attributes": []
+      }
+    }
+  }
+}

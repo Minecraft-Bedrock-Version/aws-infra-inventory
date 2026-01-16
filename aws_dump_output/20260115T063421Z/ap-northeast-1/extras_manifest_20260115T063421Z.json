@@ -1,0 +1,9 @@
+{
+  "region": "ap-northeast-1",
+  "run_ts": "20260115T063421Z",
+  "scripts": [
+    "iam_policies.py",
+    "iam_roles.py",
+    "iam_users.py"
+  ]
+}

@@ -1,0 +1,63 @@
+{
+  "meta": {
+    "dump_utc": "20260115T062047Z",
+    "region": "ap-northeast-1",
+    "service": "rds"
+  },
+  "data": {
+    "describe_db_instances": {
+      "ok": true,
+      "label": "rds.describe_db_instances",
+      "data": {
+        "op": "describe_db_instances",
+        "mode": "paginated_merge",
+        "result_key": "DBInstances",
+        "items": [],
+        "raw_pages": [
+          {
+            "DBInstances": [],
+            "ResponseMetadata": {
+              "RequestId": "4eb428b9-6f71-47ac-ad3a-70ddaf0c9654",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "4eb428b9-6f71-47ac-ad3a-70ddaf0c9654",
+                "strict-transport-security": "max-age=31536000",
+                "content-type": "text/xml",
+                "content-length": "297",
+                "date": "Thu, 15 Jan 2026 06:20:50 GMT"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    },
+    "describe_db_subnet_groups": {
+      "ok": true,
+      "label": "rds.describe_db_subnet_groups",
+      "data": {
+        "op": "describe_db_subnet_groups",
+        "mode": "paginated_merge",
+        "result_key": "DBSubnetGroups",
+        "items": [],
+        "raw_pages": [
+          {
+            "DBSubnetGroups": [],
+            "ResponseMetadata": {
+              "RequestId": "146728fa-d262-48cb-b7ae-1afd23fc03d7",
+              "HTTPStatusCode": 200,
+              "HTTPHeaders": {
+                "x-amzn-requestid": "146728fa-d262-48cb-b7ae-1afd23fc03d7",
+                "strict-transport-security": "max-age=31536000",
+                "content-type": "text/xml",
+                "content-length": "312",
+                "date": "Thu, 15 Jan 2026 06:20:50 GMT"
+              },
+              "RetryAttempts": 0
+            }
+          }
+        ]
+      }
+    }
+  }
+}

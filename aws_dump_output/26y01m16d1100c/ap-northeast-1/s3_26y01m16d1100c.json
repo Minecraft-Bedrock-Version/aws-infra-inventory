@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "dump_utc": "26y01m16d1100c",
+    "region": "ap-northeast-1",
+    "service": "s3"
+  },
+  "data": {
+    "list_buckets": {
+      "ok": true,
+      "label": "s3.list_buckets",
+      "data": {
+        "ResponseMetadata": {
+          "RequestId": "98MB6EM1P1GYCA02",
+          "HostId": "wfCIwE98e86ZiSRPWf+Mf3u6UVmeILNeVivmQga1MRUAQN62M96skbGdoo4zHmd/V2AabHIMdVk=",
+          "HTTPStatusCode": 200,
+          "HTTPHeaders": {
+            "x-amz-id-2": "wfCIwE98e86ZiSRPWf+Mf3u6UVmeILNeVivmQga1MRUAQN62M96skbGdoo4zHmd/V2AabHIMdVk=",
+            "x-amz-request-id": "98MB6EM1P1GYCA02",
+            "date": "Fri, 16 Jan 2026 02:00:50 GMT",
+            "content-type": "application/xml",
+            "transfer-encoding": "chunked",
+            "server": "AmazonS3"
+          },
+          "RetryAttempts": 0
+        },
+        "Buckets": [],
+        "Owner": {
+          "ID": "13db52b45fc036d280db52c58adfd09c164fc62b817aaa1fdc9f73945dd87df1"
+        }
+      }
+    },
+    "get_bucket_location": {
+      "ok": true,
+      "label": "s3.get_bucket_location",
+      "data": []
+    }
+  }
+}

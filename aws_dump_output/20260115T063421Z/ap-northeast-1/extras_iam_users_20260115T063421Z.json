@@ -1,0 +1,1021 @@
+{
+  "script": "iam_users.py",
+  "ok": true,
+  "returncode": 0,
+  "stdout": "{\n    \"Users\": [\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"cg-sqs-user-cgid7vg6yu5rd0\",\n                    \"UserId\": \"AIDAUGLNGQFDSPIKJRTZI\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0\",\n                    \"CreateDate\": \"2026-01-15T05:19:00+00:00\",\n                    \"Tags\": [\n                        {\n                            \"Key\": \"Scenario\",\n                            \"Value\": \"sqs_flag_shop\"\n                        },\n                        {\n                            \"Key\": \"Stack\",\n                            \"Value\": \"CloudGoat\"\n                        }\n                    ]\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"de2cf690-cb53-4c45-b4ab-d1e6aa91db48\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:28 GMT\",\n                        \"x-amzn-requestid\": \"de2cf690-cb53-4c45-b4ab-d1e6aa91db48\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"729\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [\n                    \"cg-sqs-scenario-assumed-role\"\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"31e9f87f-9044-448c-9327-d5badaef01c9\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:29 GMT\",\n                        \"x-amzn-requestid\": \"31e9f87f-9044-448c-9327-d5badaef01c9\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"393\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"ce7adb80-bcff-4e7c-bde5-4722b21718d6\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:29 GMT\",\n                        \"x-amzn-requestid\": \"ce7adb80-bcff-4e7c-bde5-4722b21718d6\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"360\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"1f93c173-59a4-4c63-8519-f2294ab54e73\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:29 GMT\",\n                        \"x-amzn-requestid\": \"1f93c173-59a4-4c63-8519-f2294ab54e73\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"322\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {},\n            \"AssumableRoles\": [\n                {\n                    \"Path\": \"/\",\n                    \"RoleName\": \"cg-sqs-send-message-cgid7vg6yu5rd0\",\n                    \"RoleId\": \"AROAUGLNGQFD3LSQM75LF\",\n                    \"Arn\": \"arn:aws:iam::288528695623:role/cg-sqs-send-message-cgid7vg6yu5rd0\",\n                    \"CreateDate\": \"2026-01-15T05:19:09+00:00\",\n                    \"AssumeRolePolicyDocument\": {\n                        \"Version\": \"2012-10-17\",\n                        \"Statement\": [\n                            {\n                                \"Effect\": \"Allow\",\n                                \"Principal\": {\n                                    \"AWS\": \"arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0\"\n                                },\n                                \"Action\": \"sts:AssumeRole\"\n                            }\n                        ]\n                    },\n                    \"MaxSessionDuration\": 3600\n                }\n            ]\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"cg-web-sqs-manager-cgid7vg6yu5rd0\",\n                    \"UserId\": \"AIDAUGLNGQFD5KYQRY63E\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/cg-web-sqs-manager-cgid7vg6yu5rd0\",\n                    \"CreateDate\": \"2026-01-15T05:19:00+00:00\",\n                    \"Tags\": [\n                        {\n                            \"Key\": \"Scenario\",\n                            \"Value\": \"sqs_flag_shop\"\n                        },\n                        {\n                            \"Key\": \"Stack\",\n                            \"Value\": \"CloudGoat\"\n                        }\n                    ]\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"2fefd3da-c8bc-478c-8251-b12434085855\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:29 GMT\",\n                        \"x-amzn-requestid\": \"2fefd3da-c8bc-478c-8251-b12434085855\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"743\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"29256c19-434d-438f-a8f1-d1323757b758\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:30 GMT\",\n                        \"x-amzn-requestid\": \"29256c19-434d-438f-a8f1-d1323757b758\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"AmazonSQSFullAccess\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/AmazonSQSFullAccess\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"546f0bf1-462e-45d9-bf28-abf4d2d2c1c3\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:30 GMT\",\n                        \"x-amzn-requestid\": \"546f0bf1-462e-45d9-bf28-abf4d2d2c1c3\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"542\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"f4aac43a-147e-4c97-a686-e6dff38989a6\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:30 GMT\",\n                        \"x-amzn-requestid\": \"f4aac43a-147e-4c97-a686-e6dff38989a6\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"322\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {},\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"cloudgoat_hyeok\",\n                    \"UserId\": \"AIDAUGLNGQFD3HJKCQM2B\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/cloudgoat_hyeok\",\n                    \"CreateDate\": \"2026-01-02T07:16:21+00:00\",\n                    \"Tags\": [\n                        {\n                            \"Key\": \"AKIAUGLNGQFD67YQVQZU\",\n                            \"Value\": \"cloudgoat\"\n                        }\n                    ]\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"b07c568b-5b8f-4bab-9a8a-6fd9f0d322f3\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:30 GMT\",\n                        \"x-amzn-requestid\": \"b07c568b-5b8f-4bab-9a8a-6fd9f0d322f3\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"618\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"92c4fd2e-04fc-4ada-a85c-9f7bf4d92cc0\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:31 GMT\",\n                        \"x-amzn-requestid\": \"92c4fd2e-04fc-4ada-a85c-9f7bf4d92cc0\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"AdministratorAccess\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"492582f8-cb88-4be8-9db8-134094bdd547\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:31 GMT\",\n                        \"x-amzn-requestid\": \"492582f8-cb88-4be8-9db8-134094bdd547\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"542\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"7f4cb4d3-1f05-4cd5-b236-2d81e89e1edd\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:31 GMT\",\n                        \"x-amzn-requestid\": \"7f4cb4d3-1f05-4cd5-b236-2d81e89e1edd\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"322\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {},\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"hyeok\",\n                    \"UserId\": \"AIDAUGLNGQFDR3SAAFQGL\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/hyeok\",\n                    \"CreateDate\": \"2026-01-09T15:40:40+00:00\",\n                    \"PasswordLastUsed\": \"2026-01-15T04:28:06+00:00\"\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"a410f19d-c527-43f9-8b5d-bf3d15d7dd50\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:31 GMT\",\n                        \"x-amzn-requestid\": \"a410f19d-c527-43f9-8b5d-bf3d15d7dd50\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"523\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"391a96ed-6542-4c19-8d0b-42ccbe1a362c\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:32 GMT\",\n                        \"x-amzn-requestid\": \"391a96ed-6542-4c19-8d0b-42ccbe1a362c\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"e078c204-eb50-406a-b022-4b11167708a7\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:32 GMT\",\n                        \"x-amzn-requestid\": \"e078c204-eb50-406a-b022-4b11167708a7\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"335a52e0-1598-434c-825c-a72643cbc2ed\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:32 GMT\",\n                        \"x-amzn-requestid\": \"335a52e0-1598-434c-825c-a72643cbc2ed\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"ddd504e8-2bce-4700-99b9-ead24b817f88\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:32 GMT\",\n                                \"x-amzn-requestid\": \"ddd504e8-2bce-4700-99b9-ead24b817f88\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"1f88fe5b-20e2-4d58-9c74-d5cc15612cd3\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:33 GMT\",\n                                \"x-amzn-requestid\": \"1f88fe5b-20e2-4d58-9c74-d5cc15612cd3\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"Interludeal\",\n                    \"UserId\": \"AIDAUGLNGQFD3R336ACPM\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/Interludeal\",\n                    \"CreateDate\": \"2026-01-09T15:40:13+00:00\"\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"2874fc0f-500c-4cb1-ba12-6847ee783d34\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:33 GMT\",\n                        \"x-amzn-requestid\": \"2874fc0f-500c-4cb1-ba12-6847ee783d34\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"471\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"a41c0389-c652-4cf8-b6fc-145165910edc\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:33 GMT\",\n                        \"x-amzn-requestid\": \"a41c0389-c652-4cf8-b6fc-145165910edc\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"1b02405e-125d-4cef-985d-c925b33cfd3a\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:34 GMT\",\n                        \"x-amzn-requestid\": \"1b02405e-125d-4cef-985d-c925b33cfd3a\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"967c8aee-7703-4656-aa48-06fe9c7e8ed1\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:34 GMT\",\n                        \"x-amzn-requestid\": \"967c8aee-7703-4656-aa48-06fe9c7e8ed1\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"27e47108-159c-4a96-959d-ac61aacc5b9e\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:34 GMT\",\n                                \"x-amzn-requestid\": \"27e47108-159c-4a96-959d-ac61aacc5b9e\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"02f2b315-059f-4cbf-9cd0-c1975f71d209\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:34 GMT\",\n                                \"x-amzn-requestid\": \"02f2b315-059f-4cbf-9cd0-c1975f71d209\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"jbbok\",\n                    \"UserId\": \"AIDAUGLNGQFD7SNB3BQZJ\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/jbbok\",\n                    \"CreateDate\": \"2026-01-09T15:39:53+00:00\"\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"9787389e-faff-4f1a-92c2-a68d0f0d4d2a\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:35 GMT\",\n                        \"x-amzn-requestid\": \"9787389e-faff-4f1a-92c2-a68d0f0d4d2a\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"459\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"68a13138-1b79-4f2b-8e8b-2d4a2f52d098\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:35 GMT\",\n                        \"x-amzn-requestid\": \"68a13138-1b79-4f2b-8e8b-2d4a2f52d098\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"13590ff6-35c9-4a37-ab9b-6c1597bc6ad3\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:35 GMT\",\n                        \"x-amzn-requestid\": \"13590ff6-35c9-4a37-ab9b-6c1597bc6ad3\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"a675cd52-827f-4cc1-b2b1-4b3733d9afba\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:35 GMT\",\n                        \"x-amzn-requestid\": \"a675cd52-827f-4cc1-b2b1-4b3733d9afba\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"58b357a2-a344-4d6e-9657-a2fcfa31113f\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:36 GMT\",\n                                \"x-amzn-requestid\": \"58b357a2-a344-4d6e-9657-a2fcfa31113f\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"2427475e-b528-47fb-b7bd-8a7ee57a2017\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:36 GMT\",\n                                \"x-amzn-requestid\": \"2427475e-b528-47fb-b7bd-8a7ee57a2017\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"LJH_03\",\n                    \"UserId\": \"AIDAUGLNGQFDYRB7W7ZNP\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/LJH_03\",\n                    \"CreateDate\": \"2026-01-10T09:16:26+00:00\",\n                    \"PasswordLastUsed\": \"2026-01-15T05:30:30+00:00\",\n                    \"Tags\": [\n                        {\n                            \"Key\": \"AKIAUGLNGQFD572WDQ7W\",\n                            \"Value\": \"LJH\"\n                        }\n                    ]\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"56ff3c35-2394-441d-ba64-dfc5d613a975\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:36 GMT\",\n                        \"x-amzn-requestid\": \"56ff3c35-2394-441d-ba64-dfc5d613a975\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"658\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"41af3225-6cfc-43a4-b682-c691950d52f8\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:36 GMT\",\n                        \"x-amzn-requestid\": \"41af3225-6cfc-43a4-b682-c691950d52f8\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"077b71b9-76ec-4e2e-a02f-d9b11051c1e4\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:37 GMT\",\n                        \"x-amzn-requestid\": \"077b71b9-76ec-4e2e-a02f-d9b11051c1e4\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"72a27c0b-f46d-4802-b350-451a274d6504\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:37 GMT\",\n                        \"x-amzn-requestid\": \"72a27c0b-f46d-4802-b350-451a274d6504\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"4c7ac5c1-71b4-4395-bbd4-24b49cffcc63\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:37 GMT\",\n                                \"x-amzn-requestid\": \"4c7ac5c1-71b4-4395-bbd4-24b49cffcc63\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"06278802-90c6-4a9b-a6f6-477eb9949f6e\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:38 GMT\",\n                                \"x-amzn-requestid\": \"06278802-90c6-4a9b-a6f6-477eb9949f6e\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"pandyo\",\n                    \"UserId\": \"AIDAUGLNGQFDSVBCRV6XY\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/pandyo\",\n                    \"CreateDate\": \"2026-01-09T15:38:19+00:00\",\n                    \"PasswordLastUsed\": \"2026-01-15T05:05:46+00:00\",\n                    \"Tags\": [\n                        {\n                            \"Key\": \"AKIAUGLNGQFDS6T7N2NH\",\n                            \"Value\": \"python and cloudgoat\"\n                        },\n                        {\n                            \"Key\": \"AKIAUGLNGQFDYXR7YN2D\",\n                            \"Value\": \"python\"\n                        },\n                        {\n                            \"Key\": \"AKIAUGLNGQFD6QJKOMV6\",\n                            \"Value\": \"terraform\"\n                        }\n                    ]\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"97181cda-b47d-48b4-9783-3bbe442f77a6\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:38 GMT\",\n                        \"x-amzn-requestid\": \"97181cda-b47d-48b4-9783-3bbe442f77a6\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"896\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"1dec09d1-5b7b-4132-a137-ffc1a4b2ffb4\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:38 GMT\",\n                        \"x-amzn-requestid\": \"1dec09d1-5b7b-4132-a137-ffc1a4b2ffb4\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"f53f2d54-c8aa-4bd4-b03c-8e0d7e80ac6e\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:38 GMT\",\n                        \"x-amzn-requestid\": \"f53f2d54-c8aa-4bd4-b03c-8e0d7e80ac6e\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"c8cb0a0c-a11c-4e92-b256-932b66a00a2b\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:39 GMT\",\n                        \"x-amzn-requestid\": \"c8cb0a0c-a11c-4e92-b256-932b66a00a2b\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"39214ae5-f26d-4481-8f80-450e63d02a29\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:39 GMT\",\n                                \"x-amzn-requestid\": \"39214ae5-f26d-4481-8f80-450e63d02a29\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"1352260b-b823-4418-b6c8-64743e2784f0\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:39 GMT\",\n                                \"x-amzn-requestid\": \"1352260b-b823-4418-b6c8-64743e2784f0\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        },\n        {\n            \"User\": {\n                \"User\": {\n                    \"Path\": \"/\",\n                    \"UserName\": \"yangyu\",\n                    \"UserId\": \"AIDAUGLNGQFD6Q7ZD4LZT\",\n                    \"Arn\": \"arn:aws:iam::288528695623:user/yangyu\",\n                    \"CreateDate\": \"2026-01-09T15:39:27+00:00\",\n                    \"PasswordLastUsed\": \"2026-01-14T22:21:43+00:00\"\n                },\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"9064b19a-4c4c-430e-8f3f-b7c182c61849\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:40 GMT\",\n                        \"x-amzn-requestid\": \"9064b19a-4c4c-430e-8f3f-b7c182c61849\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"525\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserInlinePolicies\": {\n                \"PolicyNames\": [],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"1c7d06d3-1c87-40ac-bbc9-6dd246afbefe\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:40 GMT\",\n                        \"x-amzn-requestid\": \"1c7d06d3-1c87-40ac-bbc9-6dd246afbefe\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"323\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"UserAttachedManagedPolicies\": {\n                \"AttachedPolicies\": [\n                    {\n                        \"PolicyName\": \"IAMUserChangePassword\",\n                        \"PolicyArn\": \"arn:aws:iam::aws:policy/IAMUserChangePassword\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"0afb7e00-7015-4de6-8197-e0b4e8e5c956\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:40 GMT\",\n                        \"x-amzn-requestid\": \"0afb7e00-7015-4de6-8197-e0b4e8e5c956\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"546\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"Groups\": {\n                \"Groups\": [\n                    {\n                        \"Path\": \"/\",\n                        \"GroupName\": \"mbv\",\n                        \"GroupId\": \"AGPAUGLNGQFDTQAZG6WRY\",\n                        \"Arn\": \"arn:aws:iam::288528695623:group/mbv\",\n                        \"CreateDate\": \"2026-01-09T15:37:36+00:00\"\n                    }\n                ],\n                \"IsTruncated\": false,\n                \"ResponseMetadata\": {\n                    \"RequestId\": \"75820fc0-2546-4152-b0e0-64de00153331\",\n                    \"HTTPStatusCode\": 200,\n                    \"HTTPHeaders\": {\n                        \"date\": \"Thu, 15 Jan 2026 06:34:40 GMT\",\n                        \"x-amzn-requestid\": \"75820fc0-2546-4152-b0e0-64de00153331\",\n                        \"content-type\": \"text/xml\",\n                        \"content-length\": \"582\"\n                    },\n                    \"RetryAttempts\": 0\n                }\n            },\n            \"GroupPolicies\": {\n                \"mbv\": {\n                    \"InlinePolicies\": {\n                        \"PolicyNames\": [],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"0102f092-139a-4a2c-82bb-db22e78d13bb\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:41 GMT\",\n                                \"x-amzn-requestid\": \"0102f092-139a-4a2c-82bb-db22e78d13bb\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"327\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    },\n                    \"AttachedManagedPolicies\": {\n                        \"AttachedPolicies\": [\n                            {\n                                \"PolicyName\": \"AdministratorAccess\",\n                                \"PolicyArn\": \"arn:aws:iam::aws:policy/AdministratorAccess\"\n                            }\n                        ],\n                        \"IsTruncated\": false,\n                        \"ResponseMetadata\": {\n                            \"RequestId\": \"9eb8bce5-585c-4841-8c3b-09a1ffa26a3c\",\n                            \"HTTPStatusCode\": 200,\n                            \"HTTPHeaders\": {\n                                \"date\": \"Thu, 15 Jan 2026 06:34:41 GMT\",\n                                \"x-amzn-requestid\": \"9eb8bce5-585c-4841-8c3b-09a1ffa26a3c\",\n                                \"content-type\": \"text/xml\",\n                                \"content-length\": \"546\"\n                            },\n                            \"RetryAttempts\": 0\n                        }\n                    }\n                }\n            },\n            \"AssumableRoles\": []\n        }\n    ]\n}\n",
+  "stderr": "/Users/leejehyuk/Library/Python/3.9/lib/python/site-packages/boto3/compat.py:89: PythonDeprecationWarning: Boto3 will no longer support Python 3.9 starting April 29, 2026. To continue receiving service updates, bug fixes, and security updates please upgrade to Python 3.10 or later. More information can be found here: https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/\n  warnings.warn(warning, PythonDeprecationWarning)\n",
+  "stdout_json": {
+    "Users": [
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "cg-sqs-user-cgid7vg6yu5rd0",
+            "UserId": "AIDAUGLNGQFDSPIKJRTZI",
+            "Arn": "arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0",
+            "CreateDate": "2026-01-15T05:19:00+00:00",
+            "Tags": [
+              {
+                "Key": "Scenario",
+                "Value": "sqs_flag_shop"
+              },
+              {
+                "Key": "Stack",
+                "Value": "CloudGoat"
+              }
+            ]
+          },
+          "ResponseMetadata": {
+            "RequestId": "de2cf690-cb53-4c45-b4ab-d1e6aa91db48",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:28 GMT",
+              "x-amzn-requestid": "de2cf690-cb53-4c45-b4ab-d1e6aa91db48",
+              "content-type": "text/xml",
+              "content-length": "729"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [
+            "cg-sqs-scenario-assumed-role"
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "31e9f87f-9044-448c-9327-d5badaef01c9",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:29 GMT",
+              "x-amzn-requestid": "31e9f87f-9044-448c-9327-d5badaef01c9",
+              "content-type": "text/xml",
+              "content-length": "393"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "ce7adb80-bcff-4e7c-bde5-4722b21718d6",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:29 GMT",
+              "x-amzn-requestid": "ce7adb80-bcff-4e7c-bde5-4722b21718d6",
+              "content-type": "text/xml",
+              "content-length": "360"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "1f93c173-59a4-4c63-8519-f2294ab54e73",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:29 GMT",
+              "x-amzn-requestid": "1f93c173-59a4-4c63-8519-f2294ab54e73",
+              "content-type": "text/xml",
+              "content-length": "322"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {},
+        "AssumableRoles": [
+          {
+            "Path": "/",
+            "RoleName": "cg-sqs-send-message-cgid7vg6yu5rd0",
+            "RoleId": "AROAUGLNGQFD3LSQM75LF",
+            "Arn": "arn:aws:iam::288528695623:role/cg-sqs-send-message-cgid7vg6yu5rd0",
+            "CreateDate": "2026-01-15T05:19:09+00:00",
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "AWS": "arn:aws:iam::288528695623:user/cg-sqs-user-cgid7vg6yu5rd0"
+                  },
+                  "Action": "sts:AssumeRole"
+                }
+              ]
+            },
+            "MaxSessionDuration": 3600
+          }
+        ]
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "cg-web-sqs-manager-cgid7vg6yu5rd0",
+            "UserId": "AIDAUGLNGQFD5KYQRY63E",
+            "Arn": "arn:aws:iam::288528695623:user/cg-web-sqs-manager-cgid7vg6yu5rd0",
+            "CreateDate": "2026-01-15T05:19:00+00:00",
+            "Tags": [
+              {
+                "Key": "Scenario",
+                "Value": "sqs_flag_shop"
+              },
+              {
+                "Key": "Stack",
+                "Value": "CloudGoat"
+              }
+            ]
+          },
+          "ResponseMetadata": {
+            "RequestId": "2fefd3da-c8bc-478c-8251-b12434085855",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:29 GMT",
+              "x-amzn-requestid": "2fefd3da-c8bc-478c-8251-b12434085855",
+              "content-type": "text/xml",
+              "content-length": "743"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "29256c19-434d-438f-a8f1-d1323757b758",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:30 GMT",
+              "x-amzn-requestid": "29256c19-434d-438f-a8f1-d1323757b758",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "AmazonSQSFullAccess",
+              "PolicyArn": "arn:aws:iam::aws:policy/AmazonSQSFullAccess"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "546f0bf1-462e-45d9-bf28-abf4d2d2c1c3",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:30 GMT",
+              "x-amzn-requestid": "546f0bf1-462e-45d9-bf28-abf4d2d2c1c3",
+              "content-type": "text/xml",
+              "content-length": "542"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "f4aac43a-147e-4c97-a686-e6dff38989a6",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:30 GMT",
+              "x-amzn-requestid": "f4aac43a-147e-4c97-a686-e6dff38989a6",
+              "content-type": "text/xml",
+              "content-length": "322"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {},
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "cloudgoat_hyeok",
+            "UserId": "AIDAUGLNGQFD3HJKCQM2B",
+            "Arn": "arn:aws:iam::288528695623:user/cloudgoat_hyeok",
+            "CreateDate": "2026-01-02T07:16:21+00:00",
+            "Tags": [
+              {
+                "Key": "AKIAUGLNGQFD67YQVQZU",
+                "Value": "cloudgoat"
+              }
+            ]
+          },
+          "ResponseMetadata": {
+            "RequestId": "b07c568b-5b8f-4bab-9a8a-6fd9f0d322f3",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:30 GMT",
+              "x-amzn-requestid": "b07c568b-5b8f-4bab-9a8a-6fd9f0d322f3",
+              "content-type": "text/xml",
+              "content-length": "618"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "92c4fd2e-04fc-4ada-a85c-9f7bf4d92cc0",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:31 GMT",
+              "x-amzn-requestid": "92c4fd2e-04fc-4ada-a85c-9f7bf4d92cc0",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "AdministratorAccess",
+              "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "492582f8-cb88-4be8-9db8-134094bdd547",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:31 GMT",
+              "x-amzn-requestid": "492582f8-cb88-4be8-9db8-134094bdd547",
+              "content-type": "text/xml",
+              "content-length": "542"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "7f4cb4d3-1f05-4cd5-b236-2d81e89e1edd",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:31 GMT",
+              "x-amzn-requestid": "7f4cb4d3-1f05-4cd5-b236-2d81e89e1edd",
+              "content-type": "text/xml",
+              "content-length": "322"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {},
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "hyeok",
+            "UserId": "AIDAUGLNGQFDR3SAAFQGL",
+            "Arn": "arn:aws:iam::288528695623:user/hyeok",
+            "CreateDate": "2026-01-09T15:40:40+00:00",
+            "PasswordLastUsed": "2026-01-15T04:28:06+00:00"
+          },
+          "ResponseMetadata": {
+            "RequestId": "a410f19d-c527-43f9-8b5d-bf3d15d7dd50",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:31 GMT",
+              "x-amzn-requestid": "a410f19d-c527-43f9-8b5d-bf3d15d7dd50",
+              "content-type": "text/xml",
+              "content-length": "523"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "391a96ed-6542-4c19-8d0b-42ccbe1a362c",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:32 GMT",
+              "x-amzn-requestid": "391a96ed-6542-4c19-8d0b-42ccbe1a362c",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "e078c204-eb50-406a-b022-4b11167708a7",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:32 GMT",
+              "x-amzn-requestid": "e078c204-eb50-406a-b022-4b11167708a7",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "335a52e0-1598-434c-825c-a72643cbc2ed",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:32 GMT",
+              "x-amzn-requestid": "335a52e0-1598-434c-825c-a72643cbc2ed",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "ddd504e8-2bce-4700-99b9-ead24b817f88",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:32 GMT",
+                  "x-amzn-requestid": "ddd504e8-2bce-4700-99b9-ead24b817f88",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "1f88fe5b-20e2-4d58-9c74-d5cc15612cd3",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:33 GMT",
+                  "x-amzn-requestid": "1f88fe5b-20e2-4d58-9c74-d5cc15612cd3",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "Interludeal",
+            "UserId": "AIDAUGLNGQFD3R336ACPM",
+            "Arn": "arn:aws:iam::288528695623:user/Interludeal",
+            "CreateDate": "2026-01-09T15:40:13+00:00"
+          },
+          "ResponseMetadata": {
+            "RequestId": "2874fc0f-500c-4cb1-ba12-6847ee783d34",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:33 GMT",
+              "x-amzn-requestid": "2874fc0f-500c-4cb1-ba12-6847ee783d34",
+              "content-type": "text/xml",
+              "content-length": "471"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "a41c0389-c652-4cf8-b6fc-145165910edc",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:33 GMT",
+              "x-amzn-requestid": "a41c0389-c652-4cf8-b6fc-145165910edc",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "1b02405e-125d-4cef-985d-c925b33cfd3a",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:34 GMT",
+              "x-amzn-requestid": "1b02405e-125d-4cef-985d-c925b33cfd3a",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "967c8aee-7703-4656-aa48-06fe9c7e8ed1",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:34 GMT",
+              "x-amzn-requestid": "967c8aee-7703-4656-aa48-06fe9c7e8ed1",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "27e47108-159c-4a96-959d-ac61aacc5b9e",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:34 GMT",
+                  "x-amzn-requestid": "27e47108-159c-4a96-959d-ac61aacc5b9e",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "02f2b315-059f-4cbf-9cd0-c1975f71d209",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:34 GMT",
+                  "x-amzn-requestid": "02f2b315-059f-4cbf-9cd0-c1975f71d209",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "jbbok",
+            "UserId": "AIDAUGLNGQFD7SNB3BQZJ",
+            "Arn": "arn:aws:iam::288528695623:user/jbbok",
+            "CreateDate": "2026-01-09T15:39:53+00:00"
+          },
+          "ResponseMetadata": {
+            "RequestId": "9787389e-faff-4f1a-92c2-a68d0f0d4d2a",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:35 GMT",
+              "x-amzn-requestid": "9787389e-faff-4f1a-92c2-a68d0f0d4d2a",
+              "content-type": "text/xml",
+              "content-length": "459"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "68a13138-1b79-4f2b-8e8b-2d4a2f52d098",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:35 GMT",
+              "x-amzn-requestid": "68a13138-1b79-4f2b-8e8b-2d4a2f52d098",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "13590ff6-35c9-4a37-ab9b-6c1597bc6ad3",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:35 GMT",
+              "x-amzn-requestid": "13590ff6-35c9-4a37-ab9b-6c1597bc6ad3",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "a675cd52-827f-4cc1-b2b1-4b3733d9afba",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:35 GMT",
+              "x-amzn-requestid": "a675cd52-827f-4cc1-b2b1-4b3733d9afba",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "58b357a2-a344-4d6e-9657-a2fcfa31113f",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:36 GMT",
+                  "x-amzn-requestid": "58b357a2-a344-4d6e-9657-a2fcfa31113f",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "2427475e-b528-47fb-b7bd-8a7ee57a2017",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:36 GMT",
+                  "x-amzn-requestid": "2427475e-b528-47fb-b7bd-8a7ee57a2017",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "LJH_03",
+            "UserId": "AIDAUGLNGQFDYRB7W7ZNP",
+            "Arn": "arn:aws:iam::288528695623:user/LJH_03",
+            "CreateDate": "2026-01-10T09:16:26+00:00",
+            "PasswordLastUsed": "2026-01-15T05:30:30+00:00",
+            "Tags": [
+              {
+                "Key": "AKIAUGLNGQFD572WDQ7W",
+                "Value": "LJH"
+              }
+            ]
+          },
+          "ResponseMetadata": {
+            "RequestId": "56ff3c35-2394-441d-ba64-dfc5d613a975",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:36 GMT",
+              "x-amzn-requestid": "56ff3c35-2394-441d-ba64-dfc5d613a975",
+              "content-type": "text/xml",
+              "content-length": "658"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "41af3225-6cfc-43a4-b682-c691950d52f8",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:36 GMT",
+              "x-amzn-requestid": "41af3225-6cfc-43a4-b682-c691950d52f8",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "077b71b9-76ec-4e2e-a02f-d9b11051c1e4",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:37 GMT",
+              "x-amzn-requestid": "077b71b9-76ec-4e2e-a02f-d9b11051c1e4",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "72a27c0b-f46d-4802-b350-451a274d6504",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:37 GMT",
+              "x-amzn-requestid": "72a27c0b-f46d-4802-b350-451a274d6504",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "4c7ac5c1-71b4-4395-bbd4-24b49cffcc63",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:37 GMT",
+                  "x-amzn-requestid": "4c7ac5c1-71b4-4395-bbd4-24b49cffcc63",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "06278802-90c6-4a9b-a6f6-477eb9949f6e",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:38 GMT",
+                  "x-amzn-requestid": "06278802-90c6-4a9b-a6f6-477eb9949f6e",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "pandyo",
+            "UserId": "AIDAUGLNGQFDSVBCRV6XY",
+            "Arn": "arn:aws:iam::288528695623:user/pandyo",
+            "CreateDate": "2026-01-09T15:38:19+00:00",
+            "PasswordLastUsed": "2026-01-15T05:05:46+00:00",
+            "Tags": [
+              {
+                "Key": "AKIAUGLNGQFDS6T7N2NH",
+                "Value": "python and cloudgoat"
+              },
+              {
+                "Key": "AKIAUGLNGQFDYXR7YN2D",
+                "Value": "python"
+              },
+              {
+                "Key": "AKIAUGLNGQFD6QJKOMV6",
+                "Value": "terraform"
+              }
+            ]
+          },
+          "ResponseMetadata": {
+            "RequestId": "97181cda-b47d-48b4-9783-3bbe442f77a6",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:38 GMT",
+              "x-amzn-requestid": "97181cda-b47d-48b4-9783-3bbe442f77a6",
+              "content-type": "text/xml",
+              "content-length": "896"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "1dec09d1-5b7b-4132-a137-ffc1a4b2ffb4",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:38 GMT",
+              "x-amzn-requestid": "1dec09d1-5b7b-4132-a137-ffc1a4b2ffb4",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "f53f2d54-c8aa-4bd4-b03c-8e0d7e80ac6e",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:38 GMT",
+              "x-amzn-requestid": "f53f2d54-c8aa-4bd4-b03c-8e0d7e80ac6e",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "c8cb0a0c-a11c-4e92-b256-932b66a00a2b",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:39 GMT",
+              "x-amzn-requestid": "c8cb0a0c-a11c-4e92-b256-932b66a00a2b",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "39214ae5-f26d-4481-8f80-450e63d02a29",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:39 GMT",
+                  "x-amzn-requestid": "39214ae5-f26d-4481-8f80-450e63d02a29",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "1352260b-b823-4418-b6c8-64743e2784f0",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:39 GMT",
+                  "x-amzn-requestid": "1352260b-b823-4418-b6c8-64743e2784f0",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      },
+      {
+        "User": {
+          "User": {
+            "Path": "/",
+            "UserName": "yangyu",
+            "UserId": "AIDAUGLNGQFD6Q7ZD4LZT",
+            "Arn": "arn:aws:iam::288528695623:user/yangyu",
+            "CreateDate": "2026-01-09T15:39:27+00:00",
+            "PasswordLastUsed": "2026-01-14T22:21:43+00:00"
+          },
+          "ResponseMetadata": {
+            "RequestId": "9064b19a-4c4c-430e-8f3f-b7c182c61849",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:40 GMT",
+              "x-amzn-requestid": "9064b19a-4c4c-430e-8f3f-b7c182c61849",
+              "content-type": "text/xml",
+              "content-length": "525"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserInlinePolicies": {
+          "PolicyNames": [],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "1c7d06d3-1c87-40ac-bbc9-6dd246afbefe",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:40 GMT",
+              "x-amzn-requestid": "1c7d06d3-1c87-40ac-bbc9-6dd246afbefe",
+              "content-type": "text/xml",
+              "content-length": "323"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "UserAttachedManagedPolicies": {
+          "AttachedPolicies": [
+            {
+              "PolicyName": "IAMUserChangePassword",
+              "PolicyArn": "arn:aws:iam::aws:policy/IAMUserChangePassword"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "0afb7e00-7015-4de6-8197-e0b4e8e5c956",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:40 GMT",
+              "x-amzn-requestid": "0afb7e00-7015-4de6-8197-e0b4e8e5c956",
+              "content-type": "text/xml",
+              "content-length": "546"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "Groups": {
+          "Groups": [
+            {
+              "Path": "/",
+              "GroupName": "mbv",
+              "GroupId": "AGPAUGLNGQFDTQAZG6WRY",
+              "Arn": "arn:aws:iam::288528695623:group/mbv",
+              "CreateDate": "2026-01-09T15:37:36+00:00"
+            }
+          ],
+          "IsTruncated": false,
+          "ResponseMetadata": {
+            "RequestId": "75820fc0-2546-4152-b0e0-64de00153331",
+            "HTTPStatusCode": 200,
+            "HTTPHeaders": {
+              "date": "Thu, 15 Jan 2026 06:34:40 GMT",
+              "x-amzn-requestid": "75820fc0-2546-4152-b0e0-64de00153331",
+              "content-type": "text/xml",
+              "content-length": "582"
+            },
+            "RetryAttempts": 0
+          }
+        },
+        "GroupPolicies": {
+          "mbv": {
+            "InlinePolicies": {
+              "PolicyNames": [],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "0102f092-139a-4a2c-82bb-db22e78d13bb",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:41 GMT",
+                  "x-amzn-requestid": "0102f092-139a-4a2c-82bb-db22e78d13bb",
+                  "content-type": "text/xml",
+                  "content-length": "327"
+                },
+                "RetryAttempts": 0
+              }
+            },
+            "AttachedManagedPolicies": {
+              "AttachedPolicies": [
+                {
+                  "PolicyName": "AdministratorAccess",
+                  "PolicyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+                }
+              ],
+              "IsTruncated": false,
+              "ResponseMetadata": {
+                "RequestId": "9eb8bce5-585c-4841-8c3b-09a1ffa26a3c",
+                "HTTPStatusCode": 200,
+                "HTTPHeaders": {
+                  "date": "Thu, 15 Jan 2026 06:34:41 GMT",
+                  "x-amzn-requestid": "9eb8bce5-585c-4841-8c3b-09a1ffa26a3c",
+                  "content-type": "text/xml",
+                  "content-length": "546"
+                },
+                "RetryAttempts": 0
+              }
+            }
+          }
+        },
+        "AssumableRoles": []
+      }
+    ]
+  }
+}

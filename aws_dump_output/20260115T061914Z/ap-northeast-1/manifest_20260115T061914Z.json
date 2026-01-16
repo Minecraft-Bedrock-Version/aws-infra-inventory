@@ -1,0 +1,14 @@
+{
+  "meta": {
+    "dump_utc": "20260115T061914Z",
+    "region": "ap-northeast-1"
+  },
+  "services": [
+    "ec2",
+    "iam",
+    "lambda",
+    "rds",
+    "s3",
+    "sqs"
+  ]
+}
