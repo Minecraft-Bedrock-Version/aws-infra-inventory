@@ -111,7 +111,9 @@ def run_extra_scripts(project_dir: Path, output_dir: Path, region: str) -> Dict[
         script_result: Dict[str, Any] = {"script": script.name, "ok": True}
 
         env = os.environ.copy()
+        # Ensure child scripts (iam*.py etc.) use the same region as this run.
         env["AWS_REGION"] = region
+        env["AWS_DEFAULT_REGION"] = region
         env["OUTPUT_DIR"] = str(output_dir)
         env["RUN_TS"] = output_dir.parent.name  # folder name like 20260115T061612Z
 
@@ -228,7 +230,8 @@ def dump_region(region: str) -> Dict[str, Any]:
     # =========================
     # S3 (글로벌 목록 + 버킷별 위치 정도)
     # =========================
-    s3 = boto3.Session().client("s3")
+    # Use the same session/region for consistency (S3 list_buckets is global but keeping one session avoids confusion)
+    s3 = session.client("s3")
     s3_block: Dict[str, Any] = {}
     s3_block["list_buckets"] = safe_call(lambda: s3.list_buckets(), "s3.list_buckets")
 
@@ -274,7 +277,8 @@ def dump_region(region: str) -> Dict[str, Any]:
 def main():
     # 필요하면 여기서 리전을 여러 개로 늘릴 수 있음
     regions = [
-        os.environ.get("AWS_REGION", "ap-northeast-1"),
+        # Default to us-east-1 unless AWS_REGION is explicitly set in the environment.
+        os.environ.get("AWS_REGION", "us-east-1"),
     ]
 
     project_dir = Path(__file__).resolve().parent
