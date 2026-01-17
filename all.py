@@ -11,6 +11,7 @@ from typing import Any, Dict, List, Optional
 
 import boto3
 from botocore.exceptions import ClientError
+import base64
 
 
 def json_default(o: Any):
@@ -88,7 +89,7 @@ def safe_call(fn, label: str) -> Dict[str, Any]:
 def run_extra_scripts(project_dir: Path, output_dir: Path, region: str) -> Dict[str, Any]:
     """
     Run additional .py scripts (e.g., separate IAM dump scripts) found in the project directory.
-    We auto-detect scripts whose filename starts with 'iam' (case-insensitive), excluding this all.py.
+    We auto-detect scripts whose filename starts with 'iam' (case-insensitive) OR is exactly 'vpc.py', excluding this all.py.
     Each script is executed with:
       - cwd=output_dir (so relative outputs land next to our files)
       - env OUTPUT_DIR set to output_dir (for scripts that support it)
@@ -98,14 +99,20 @@ def run_extra_scripts(project_dir: Path, output_dir: Path, region: str) -> Dict[
     """
     results: Dict[str, Any] = {"region": region, "scripts": []}
 
-    # Detect extra scripts (iam*.py) next to all.py
-    candidates = sorted(
-        [
-            p for p in project_dir.glob("iam*.py")
-            if p.is_file() and p.name != "all.py"
-        ],
-        key=lambda p: p.name.lower(),
-    )
+    # Detect extra scripts next to all.py
+    # - iam*.py (case-insensitive)
+    # - vpc.py (explicit)
+    candidates_set = set()
+    for p in project_dir.glob("*.py"):
+        if not p.is_file():
+            continue
+        name_l = p.name.lower()
+        if p.name == "all.py":
+            continue
+        if name_l.startswith("iam") or name_l == "vpc.py":
+            candidates_set.add(p)
+
+    candidates = sorted(list(candidates_set), key=lambda p: p.name.lower())
 
     for script in candidates:
         script_result: Dict[str, Any] = {"script": script.name, "ok": True}
@@ -164,6 +171,52 @@ def dump_region(region: str) -> Dict[str, Any]:
     # EC2 (인스턴스 + VPC 관련 대부분은 EC2 API에서 나옴)
     # =========================
     ec2 = session.client("ec2")
+    # -------------------------
+    # EC2 UserData inspection helpers
+    # -------------------------
+    SQS_ENDPOINT = "https://sqs.us-east-1.amazonaws.com"
+    RDS_ENDPOINT = "us-east-1.rds.amazonaws.com"
+
+    def fetch_instance_userdata_text(ec2_client, instance_id: str) -> str:
+        """
+        Fetch EC2 UserData (base64-encoded) and return decoded text.
+        If no UserData exists, return empty string.
+        """
+        try:
+            resp = ec2_client.describe_instance_attribute(
+                InstanceId=instance_id,
+                Attribute="userData",
+            )
+            b64 = (resp.get("UserData") or {}).get("Value")
+            if not b64:
+                return ""
+            raw = base64.b64decode(b64)
+            return raw.decode("utf-8", errors="replace")
+        except Exception:
+            return ""
+
+    def enrich_instances_with_userdata():
+        enriched = []
+        resp = paginated_call(ec2, "describe_instances")
+        if resp.get("mode") not in ("single", "paginated_pages"):
+            return enriched
+
+        pages = resp.get("pages") or [resp.get("response")]
+        for page in pages:
+            for resv in page.get("Reservations", []):
+                for inst in resv.get("Instances", []):
+                    instance_id = inst.get("InstanceId")
+                    if not instance_id:
+                        continue
+
+                    userdata = fetch_instance_userdata_text(ec2, instance_id)
+                    enriched.append({
+                        "InstanceId": instance_id,
+                        "SQS": SQS_ENDPOINT in userdata,
+                        "RDS": RDS_ENDPOINT in userdata,
+                    })
+        return enriched
+
     out["services"]["ec2"] = {
         "describe_instances": safe_call(lambda: paginated_call(ec2, "describe_instances"), "ec2.describe_instances"),
         "describe_vpcs": safe_call(lambda: paginated_call(ec2, "describe_vpcs", "Vpcs"), "ec2.describe_vpcs"),
@@ -192,6 +245,7 @@ def dump_region(region: str) -> Dict[str, Any]:
             lambda: paginated_call(ec2, "describe_network_interfaces", "NetworkInterfaces"),
             "ec2.describe_network_interfaces",
         ),
+        "instances_enriched": safe_call(enrich_instances_with_userdata, "ec2.instances_userdata_enriched"),
     }
 
     # =========================
@@ -226,6 +280,83 @@ def dump_region(region: str) -> Dict[str, Any]:
 
     sqs_block["get_queue_attributes_all"] = safe_call(fetch_all_queue_attrs, "sqs.get_queue_attributes(All)")
     out["services"]["sqs"] = sqs_block
+
+    # =========================
+    # SQS -> Lambda Trigger & Lambda Environment Variables (best-effort)
+    # Note: "SQS queue" itself doesn't have environment variables. Typically, trigger-related env vars
+    # live on the Lambda function that is triggered by SQS. So we map SQS queues to Lambda functions
+    # via Event Source Mappings, then fetch each function's environment variables.
+    # =========================
+
+    def fetch_sqs_trigger_lambda_envs():
+        # 1) Get all queues + attributes to resolve QueueArn
+        q_resp = sqs.list_queues()
+        queue_urls = q_resp.get("QueueUrls", [])
+
+        url_to_attrs: Dict[str, Dict[str, str]] = {}
+        arn_to_url: Dict[str, str] = {}
+
+        for url in queue_urls:
+            attrs = sqs.get_queue_attributes(QueueUrl=url, AttributeNames=["QueueArn"]).get("Attributes", {})
+            url_to_attrs[url] = attrs
+            q_arn = attrs.get("QueueArn")
+            if q_arn:
+                arn_to_url[q_arn] = url
+
+        # 2) Get Lambda event source mappings (regional)
+        mappings_resp = paginated_call(lam, "list_event_source_mappings", "EventSourceMappings")
+        mappings = mappings_resp.get("items", []) if mappings_resp.get("mode") == "paginated_merge" else []
+
+        # Filter to SQS mappings only
+        sqs_mappings = []
+        function_names: set = set()
+        for m in mappings:
+            src_arn = m.get("EventSourceArn")
+            if src_arn and ":sqs:" in src_arn:
+                sqs_mappings.append(m)
+                fn_arn = m.get("FunctionArn")
+                if fn_arn:
+                    function_names.add(fn_arn)
+
+        # 3) Fetch Lambda function configs to get environment variables
+        fn_envs: Dict[str, Any] = {}
+        for fn_arn in sorted(list(function_names)):
+            cfg = lam.get_function_configuration(FunctionName=fn_arn)
+            fn_envs[fn_arn] = {
+                "FunctionName": cfg.get("FunctionName"),
+                "FunctionArn": cfg.get("FunctionArn"),
+                "Runtime": cfg.get("Runtime"),
+                "Handler": cfg.get("Handler"),
+                "Role": cfg.get("Role"),
+                "Timeout": cfg.get("Timeout"),
+                "MemorySize": cfg.get("MemorySize"),
+                "Environment": (cfg.get("Environment") or {}).get("Variables", {}),
+            }
+
+        # 4) Join: queueArn -> queueUrl -> mappings -> function env
+        joined = []
+        for m in sqs_mappings:
+            src_arn = m.get("EventSourceArn")
+            fn_arn = m.get("FunctionArn")
+            joined.append(
+                {
+                    "EventSourceArn": src_arn,
+                    "QueueUrl": arn_to_url.get(src_arn),
+                    "UUID": m.get("UUID"),
+                    "State": m.get("State"),
+                    "BatchSize": m.get("BatchSize"),
+                    "MaximumBatchingWindowInSeconds": m.get("MaximumBatchingWindowInSeconds"),
+                    "FunctionArn": fn_arn,
+                    "Function": fn_envs.get(fn_arn),
+                }
+            )
+
+        return {
+            "queues": [{"QueueUrl": u, "QueueArn": url_to_attrs.get(u, {}).get("QueueArn")} for u in queue_urls],
+            "event_source_mappings": joined,
+        }
+
+    sqs_block["sqs_trigger_lambda_envs"] = safe_call(fetch_sqs_trigger_lambda_envs, "sqs->lambda trigger env vars")
 
     # =========================
     # S3 (글로벌 목록 + 버킷별 위치 정도)
@@ -331,7 +462,7 @@ def main():
 
         saved_paths.append(manifest_path)
 
-        # Run extra scripts (e.g., IAM dump scripts) and save ONLY actual IAM output files, not extras_* logs.
+        # Run extra scripts (iam*.py, vpc.py) and save their stdout JSON into per-script files.
         extras_summary = run_extra_scripts(project_dir=project_dir, output_dir=Path(region_dir), region=region)
 
         for s in extras_summary.get("scripts", []):
