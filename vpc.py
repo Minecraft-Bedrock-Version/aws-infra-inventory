@@ -22,7 +22,6 @@ def utc_ts() -> str:
 
 
 def _session(region: Optional[str] = None) -> boto3.Session:
-    # Use explicit region if provided, otherwise rely on env/config.
     if region:
         return boto3.Session(region_name=region)
     return boto3.Session()
@@ -54,7 +53,6 @@ def get_route_tables(ec2) -> List[Dict[str, Any]]:
 
 
 def is_public_route_table(route_table: Dict[str, Any]) -> bool:
-    # Public if it has a default route (0.0.0.0/0) to an Internet Gateway.
     for route in route_table.get("Routes", []) or []:
         if route.get("DestinationCidrBlock") == "0.0.0.0/0":
             gw = route.get("GatewayId", "") or ""
@@ -64,17 +62,13 @@ def is_public_route_table(route_table: Dict[str, Any]) -> bool:
 
 
 def map_subnet_visibility(route_tables: List[Dict[str, Any]]) -> Dict[str, str]:
-    # subnet_id -> "public" | "private"
     subnet_visibility: Dict[str, str] = {}
-
     for rt in route_tables:
         visibility = "public" if is_public_route_table(rt) else "private"
         for assoc in rt.get("Associations", []) or []:
             subnet_id = assoc.get("SubnetId")
-            # Main association has no SubnetId
             if subnet_id:
                 subnet_visibility[subnet_id] = visibility
-
     return subnet_visibility
 
 
@@ -94,12 +88,17 @@ def collect_vpc_inventory(region: Optional[str] = None) -> Dict[str, Any]:
     for vpc in vpcs:
         vpc_id = vpc["VpcId"]
 
+        # 1. IGW 정보 수집 (ID와 Name 포함)
         vpc_igws = []
         for igw in igws:
             for att in igw.get("Attachments", []) or []:
                 if att.get("VpcId") == vpc_id:
-                    vpc_igws.append(igw.get("InternetGatewayId"))
+                    vpc_igws.append({
+                        "internet_gateway_id": igw.get("InternetGatewayId"),
+                        "name": _tag_value(igw.get("Tags"), "Name")
+                    })
 
+        # 2. Subnet 정보 수집
         vpc_subnets = []
         for sn in subnets:
             if sn.get("VpcId") != vpc_id:
@@ -116,6 +115,7 @@ def collect_vpc_inventory(region: Optional[str] = None) -> Dict[str, Any]:
                 }
             )
 
+        # 3. Route Table 정보 수집
         vpc_rts = []
         for rt in route_tables:
             if rt.get("VpcId") != vpc_id:
@@ -139,13 +139,14 @@ def collect_vpc_inventory(region: Optional[str] = None) -> Dict[str, Any]:
                 }
             )
 
+        # 4. 최종 인벤토리 구성 (필드명 'default' 반영)
         inventory.append(
             {
                 "vpc_id": vpc_id,
                 "name": _tag_value(vpc.get("Tags"), "Name"),
                 "cidr": vpc.get("CidrBlock"),
-                "is_default": vpc.get("IsDefault"),
-                "internet_gateways": [x for x in vpc_igws if x],
+                "default": vpc.get("IsDefault"), # 필드명 변경: is_default -> default
+                "internet_gateways": vpc_igws,
                 "subnets": sorted(vpc_subnets, key=lambda x: (x.get("visibility") or "", x.get("subnet_id") or "")),
                 "route_tables": sorted(vpc_rts, key=lambda x: (x.get("type") or "", x.get("route_table_id") or "")),
             }
@@ -162,7 +163,6 @@ def collect_vpc_inventory(region: Optional[str] = None) -> Dict[str, Any]:
 
 
 def main():
-    # When executed from all.py, AWS_REGION/AWS_DEFAULT_REGION are propagated.
     region = os.environ.get("AWS_REGION") or os.environ.get("AWS_DEFAULT_REGION")
 
     try:
