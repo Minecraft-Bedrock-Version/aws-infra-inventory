@@ -76,6 +76,9 @@ def collect_vpc_inventory(region: Optional[str] = None) -> Dict[str, Any]:
     session = _session(region)
     ec2 = session.client("ec2")
 
+    sts = session.client("sts")
+    account_id = sts.get_caller_identity().get("Account")
+
     vpcs = get_vpcs(ec2)
     igws = get_igws(ec2)
     subnets = get_subnets(ec2)
