@@ -75,7 +75,7 @@ def collect_resources():
         }
     }
 
-    output_file = 'collected_resources_v3.json'
+    output_file = 'ec2.json'
     with open(output_file, 'w', encoding='utf-8') as f:
         json.dump(final_output, f, default=datetime_handler, indent=4, ensure_ascii=False)
 
