@@ -1,82 +1,92 @@
 import boto3
 import json
 from datetime import datetime
-from botocore.exceptions import ClientError
 
-iam = boto3.client("iam")
+def datetime_handler(x):
+    if isinstance(x, datetime):
+        return x.isoformat()
+    raise TypeError("Unknown type")
 
+def get_integrated_user_data():
+    iam = boto3.client('iam')
+    integrated_users = []
 
-def datetime_handler(obj):
-    # Match iam_users.py behavior: serialize datetime, fail on unknown types
-    if isinstance(obj, datetime):
-        return obj.isoformat()
-    raise TypeError(f"Type not serializable: {type(obj)}")
-
-
-def collect_attached_managed_policies_with_documents():
-    """
-    Collect managed IAM policies that are actually attached (OnlyAttached=True),
-    and include each policy's DEFAULT version document.
-    Output is ONE JSON object so all.py can capture and save it.
-    """
-    result = {
-        "Policies": [],
-        "Errors": [],
-    }
-
-    paginator = iam.get_paginator("list_policies")
-
-    try:
-        for page in paginator.paginate(Scope="All", OnlyAttached=True):
-            for policy in page.get("Policies", []):
-                policy_arn = policy.get("Arn")
-                if not policy_arn:
-                    continue
-
-                try:
-                    policy_detail = iam.get_policy(PolicyArn=policy_arn)
-                    default_version_id = policy_detail["Policy"]["DefaultVersionId"]
-
-                    policy_version = iam.get_policy_version(
-                        PolicyArn=policy_arn,
-                        VersionId=default_version_id
-                    )
-
-                    result["Policies"].append({
-                        "Policy": policy,  # RAW from list_policies
-                        "PolicyDetail": policy_detail,  # RAW from get_policy
-                        "DefaultVersionId": default_version_id,
-                        "PolicyVersion": policy_version,  # RAW from get_policy_version (includes Document)
+    # 1. 모든 사용자 리스트 가져오기
+    paginator = iam.get_paginator('list_users')
+    for page in paginator.paginate():
+        for user in page['Users']:
+            user_name = user['UserName']
+            policies_detail = []
+            
+            try:
+                # 사용자에게 직접 연결된 관리형 정책 (Attached Policies)
+                attached = iam.list_attached_user_policies(UserName=user_name)
+                for p in attached['AttachedPolicies']:
+                    p_info = iam.get_policy(PolicyArn=p['PolicyArn'])
+                    v_id = p_info['Policy']['DefaultVersionId']
+                    p_ver = iam.get_policy_version(PolicyArn=p['PolicyArn'], VersionId=v_id)
+                    policies_detail.append({
+                        "Source": "Directly Attached",
+                        "PolicyName": p['PolicyName'],
+                        "PolicyDocument": p_ver['PolicyVersion']['Document']
                     })
 
-                except ClientError as e:
-                    result["Errors"].append({
-                        "PolicyArn": policy_arn,
-                        "Error": e.response.get("Error", {}),
+                # 사용자에게 직접 작성된 인라인 정책 (Inline Policies)
+                inline = iam.list_user_policies(UserName=user_name)
+                for p_name in inline['PolicyNames']:
+                    p_detail = iam.get_user_policy(UserName=user_name, PolicyName=p_name)
+                    policies_detail.append({
+                        "Source": "Direct Inline",
+                        "PolicyName": p_name,
+                        "PolicyDocument": p_detail['PolicyDocument']
                     })
-                except Exception as e:
-                    result["Errors"].append({
-                        "PolicyArn": policy_arn,
-                        "Error": {"Code": type(e).__name__, "Message": str(e)},
-                    })
 
-    except ClientError as e:
-        # If the whole call fails (e.g., AccessDenied), still print JSON for all.py to save.
-        result["Errors"].append({
-            "PolicyArn": None,
-            "Error": e.response.get("Error", {}),
-        })
-    except Exception as e:
-        result["Errors"].append({
-            "PolicyArn": None,
-            "Error": {"Code": type(e).__name__, "Message": str(e)},
-        })
+                # 그룹을 통해 상속받은 정책 (Group Policies)
+                groups = iam.list_groups_for_user(UserName=user_name)
+                for g in groups['Groups']:
+                    group_name = g['GroupName']
+                    
+                    # 그룹에 연결된 관리형 정책
+                    g_attached = iam.list_attached_group_policies(GroupName=group_name)
+                    for gp in g_attached['AttachedPolicies']:
+                        gp_info = iam.get_policy(PolicyArn=gp['PolicyArn'])
+                        gv_id = gp_info['Policy']['DefaultVersionId']
+                        gv_ver = iam.get_policy_version(PolicyArn=gp['PolicyArn'], VersionId=gv_id)
+                        policies_detail.append({
+                            "Source": f"Group Attached ({group_name})",
+                            "PolicyName": gp['PolicyName'],
+                            "PolicyDocument": gv_ver['PolicyVersion']['Document']
+                        })
+                    
+                    # 그룹에 작성된 인라인 정책
+                    g_inline = iam.list_group_policies(GroupName=group_name)
+                    for gp_name in g_inline['PolicyNames']:
+                        gp_detail = iam.get_group_policy(GroupName=group_name, PolicyName=gp_name)
+                        policies_detail.append({
+                            "Source": f"Group Inline ({group_name})",
+                            "PolicyName": gp_name,
+                            "PolicyDocument": gp_detail['PolicyDocument']
+                        })
 
-    return result
+            except Exception as e:
+                print(f"Error fetching data for {user_name}: {e}")
 
+            # 최종 결과 조립
+            integrated_users.append({
+                "node_type": "iam_user",
+                "name": user_name,
+                "resource_id": user['UserId'],
+                "attributes": {
+                    "arn": user['Arn'],
+                    "create_date": user['CreateDate'].isoformat(),
+                    "policies": policies_detail
+                }
+            })
 
-policies_data = collect_attached_managed_policies_with_documents()
+    return integrated_users
 
-# IMPORTANT: print ONLY ONE JSON object to stdout (no other prints),
-# so all.py can json.loads(stdout) and save iam_policies_<run_id>.json.
-print(json.dumps(policies_data, indent=4, default=datetime_handler))
+if __name__ == "__main__":
+    data = get_integrated_user_data()
+    output_file = 'iam_user.json'
+    with open(output_file, 'w') as f:
+        json.dump(data, f, indent=2, default=datetime_handler)
