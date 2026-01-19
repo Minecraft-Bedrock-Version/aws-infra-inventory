@@ -5,6 +5,7 @@ import json
 import os
 import sys
 import subprocess
+import argparse
 from pathlib import Path
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
@@ -156,8 +157,7 @@ def run_extra_scripts(project_dir: Path, output_dir: Path, region: str) -> Dict[
 
     return results
 
-def dump_region(region: str) -> Dict[str, Any]:
-    session = boto3.Session(region_name=region)
+def dump_region(session: boto3.Session, region: str) -> Dict[str, Any]:
 
     out: Dict[str, Any] = {
         "meta": {
@@ -170,7 +170,7 @@ def dump_region(region: str) -> Dict[str, Any]:
     # =========================
     # EC2 (인스턴스 + VPC 관련 대부분은 EC2 API에서 나옴)
     # =========================
-    ec2 = session.client("ec2")
+    ec2 = session.client("ec2", region_name=region)
     # -------------------------
     # EC2 UserData inspection helpers
     # -------------------------
@@ -251,7 +251,7 @@ def dump_region(region: str) -> Dict[str, Any]:
     # =========================
     # Lambda
     # =========================
-    lam = session.client("lambda")
+    lam = session.client("lambda", region_name=region)
     out["services"]["lambda"] = {
         "list_functions": safe_call(lambda: paginated_call(lam, "list_functions", "Functions"), "lambda.list_functions"),
         # Event source mappings도 전체 수집(예: SQS 트리거)
@@ -264,7 +264,7 @@ def dump_region(region: str) -> Dict[str, Any]:
     # =========================
     # SQS
     # =========================
-    sqs = session.client("sqs")
+    sqs = session.client("sqs", region_name=region)
     sqs_block: Dict[str, Any] = {}
     sqs_block["list_queues"] = safe_call(lambda: sqs.list_queues(), "sqs.list_queues")
 
@@ -362,7 +362,7 @@ def dump_region(region: str) -> Dict[str, Any]:
     # S3 (글로벌 목록 + 버킷별 위치 정도)
     # =========================
     # Use the same session/region for consistency (S3 list_buckets is global but keeping one session avoids confusion)
-    s3 = session.client("s3")
+    s3 = session.client("s3", region_name=region)
     s3_block: Dict[str, Any] = {}
     s3_block["list_buckets"] = safe_call(lambda: s3.list_buckets(), "s3.list_buckets")
 
@@ -390,7 +390,7 @@ def dump_region(region: str) -> Dict[str, Any]:
     # =========================
     # RDS
     # =========================
-    rds = session.client("rds")
+    rds = session.client("rds", region_name=region)
     out["services"]["rds"] = {
         "describe_db_instances": safe_call(
             lambda: paginated_call(rds, "describe_db_instances", "DBInstances"),
@@ -406,15 +406,32 @@ def dump_region(region: str) -> Dict[str, Any]:
 
 
 def main():
-    # 필요하면 여기서 리전을 여러 개로 늘릴 수 있음
-    regions = [
-        # Default to us-east-1 unless AWS_REGION is explicitly set in the environment.
-        os.environ.get("AWS_REGION", "us-east-1"),
-    ]
+    ap = argparse.ArgumentParser(description="AWS resource collection (EC2/Lambda/SQS/S3/RDS) + extras (iam*.py, vpc.py).")
+    ap.add_argument("--profile", default=os.environ.get("AWS_PROFILE"), help="AWS profile name (optional). Can also use AWS_PROFILE env.")
+    ap.add_argument(
+        "--regions",
+        default=os.environ.get("AWS_REGIONS") or os.environ.get("AWS_REGION") or "us-east-1",
+        help="Comma-separated regions. Default: AWS_REGIONS or AWS_REGION or us-east-1",
+    )
+    ap.add_argument(
+        "--out-root",
+        default=os.environ.get("OUTPUT_ROOT") or "aws_dump_output",
+        help="Output root directory (default: aws_dump_output). Can also use OUTPUT_ROOT env.",
+    )
+    ap.add_argument(
+        "--no-extras",
+        action="store_true",
+        help="Do not run extra scripts (iam*.py, vpc.py).",
+    )
+    args = ap.parse_args()
+
+    regions = [r.strip() for r in (args.regions or "").split(",") if r.strip()]
+    if not regions:
+        regions = ["us-east-1"]
 
     project_dir = Path(__file__).resolve().parent
 
-    out_root = "aws_dump_output"
+    out_root = args.out_root
     os.makedirs(out_root, exist_ok=True)
 
     run_ts = local_run_id()
@@ -422,12 +439,18 @@ def main():
     run_dir = os.path.join(out_root, run_ts)
     os.makedirs(run_dir, exist_ok=True)
 
+    # Build one session for the chosen profile (region is passed per-client)
+    if args.profile:
+        session = boto3.Session(profile_name=args.profile)
+    else:
+        session = boto3.Session()
+
     saved_paths: List[str] = []
 
     for region in regions:
-        region_dump = dump_region(region)
+        region_dump = dump_region(session=session, region=region)
 
-        # Save per-service files under aws_dump_output/<run_ts>/<region>/
+        # Save per-service files under <out_root>/<run_ts>/<region>/
         region_dir = os.path.join(run_dir, region)
         os.makedirs(region_dir, exist_ok=True)
 
@@ -438,6 +461,7 @@ def main():
                     "dump_utc": run_ts,
                     "region": region,
                     "service": service_name,
+                    "profile": args.profile,
                 },
                 "data": service_payload,
             }
@@ -448,13 +472,21 @@ def main():
 
             saved_paths.append(service_path)
 
+        # Save a combined full dump for the region (handy for debugging / replay)
+        full_path = os.path.join(region_dir, f"full_{run_ts}.json")
+        with open(full_path, "w", encoding="utf-8") as f:
+            json.dump(region_dump, f, ensure_ascii=False, indent=2, default=json_default)
+        saved_paths.append(full_path)
+
         # Also save a small manifest for the region
         manifest = {
             "meta": {
                 "dump_utc": run_ts,
                 "region": region,
+                "profile": args.profile,
             },
             "services": sorted(list(services.keys())),
+            "full_dump": os.path.basename(full_path),
         }
         manifest_path = os.path.join(region_dir, f"manifest_{run_ts}.json")
         with open(manifest_path, "w", encoding="utf-8") as f:
@@ -463,18 +495,25 @@ def main():
         saved_paths.append(manifest_path)
 
         # Run extra scripts (iam*.py, vpc.py) and save their stdout JSON into per-script files.
-        extras_summary = run_extra_scripts(project_dir=project_dir, output_dir=Path(region_dir), region=region)
+        if not args.no_extras:
+            extras_summary = run_extra_scripts(project_dir=project_dir, output_dir=Path(region_dir), region=region)
 
-        for s in extras_summary.get("scripts", []):
-            script_name = s.get("script", "unknown.py")
-            script_stem = os.path.splitext(script_name)[0]
+            for s in extras_summary.get("scripts", []):
+                script_name = s.get("script", "unknown.py")
+                script_stem = os.path.splitext(script_name)[0]
 
-            stdout_json = s.get("stdout_json")
-            if stdout_json is not None:
-                out_path = os.path.join(region_dir, f"{script_stem}_{run_ts}.json")
-                with open(out_path, "w", encoding="utf-8") as f:
-                    json.dump(stdout_json, f, ensure_ascii=False, indent=2, default=json_default)
-                saved_paths.append(out_path)
+                stdout_json = s.get("stdout_json")
+                if stdout_json is not None:
+                    out_path = os.path.join(region_dir, f"{script_stem}_{run_ts}.json")
+                    with open(out_path, "w", encoding="utf-8") as f:
+                        json.dump(stdout_json, f, ensure_ascii=False, indent=2, default=json_default)
+                    saved_paths.append(out_path)
+
+            # Save extras summary itself for troubleshooting
+            extras_path = os.path.join(region_dir, f"extras_{run_ts}.json")
+            with open(extras_path, "w", encoding="utf-8") as f:
+                json.dump(extras_summary, f, ensure_ascii=False, indent=2, default=json_default)
+            saved_paths.append(extras_path)
 
     print("[OK] Saved files:")
     for p in saved_paths:
