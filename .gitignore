@@ -1,2 +1,6 @@
 .DS_Store
 aws_dump_output/
+
+# dumps
+aws_dump_output/
+.DS_Store
