@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "collected_at": "2026-01-19T06:46:50.893311+00:00",
+  "account_id": "123456789012",
+  "nodes": [
+    {
+      "node_type": "iam_user",
+      "node_id": "iam_user:123456789012:scp-test",
+      "resource_id": "scp-test",
+      "name": "scp-test",
+      "attributes": {
+        "arn": "arn_string",
+        "create_date": "2026-01-19T06:46:50.893311+00:00",
+        "attached_policies": [],
+        "inline_policies": [
+          {
+            "PolicyName": "cg-sqs-scenario-assumed-role",
+            "Statement": [
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "iam:Get*",
+                  "iam:List*"
+                ],
+                "Resource": "*"
+              },
+              {
+                "Effect": "Allow",
+                "Action": [
+                  "sts:AssumeRole"
+                ],
+                "Resource": "*"
+              }
+            ]
+          }
+        ],
+        "group_policies": []
+      },
+      "raw_refs": {
+        "source": [
+          "cli:aws iam put-user-policy"
+        ],
+        "collected_at": "2026-01-19T06:46:50.893311+00:00"
+      }
+    }
+  ]
+}
