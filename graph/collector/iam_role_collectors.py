@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 from datetime import datetime, timezone
 
 def collect_iam_roles():
-    iam = boto3.client("iam")
+    iam = boto3.client("iam", region_name="us-east-1"
     
     items = []
     policy_content_cache = {}
