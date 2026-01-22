@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 from datetime import datetime, timezone
 
 def collect_iam_users():
-    iam = boto3.client("iam")
+    iam = boto3.client("iam", region_name="us-east-1")
 
     users_raw = []
     policy_content_cache = {}
