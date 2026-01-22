@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 
 
 def collect_lambda(session, region: str) -> Dict[str, Any]:
-    client = session.client("lambda", region_name=region)
+    client = session.client("lambda", region_name="us-east-1")
 
     collected_at = datetime.now(timezone.utc).isoformat()
 
@@ -78,16 +78,3 @@ def _err(e: Exception) -> Dict[str, Any]:
             "ResponseMetadata": r.get("ResponseMetadata", {}),
         }
     return {"Error": {"Message": str(e)}}
-
-
-if __name__ == "__main__":
-    import argparse, boto3, json
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--profile", default=None)
-    ap.add_argument("--region", default="ap-northeast-2")
-    args = ap.parse_args()
-
-    sess = boto3.Session(profile_name=args.profile) if args.profile else boto3.Session()
-    data = collect_lambda(sess, args.region)
-    print(json.dumps(data, ensure_ascii=False, indent=2))
