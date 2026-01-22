@@ -5,7 +5,7 @@ from typing import Any, Dict, List
 from datetime import datetime, timezone
 
 def collect_rds(session, region: str):
-    client = session.client("rds", region_name=region)
+    client = session.client("rds", region_name="us-east-1")
     collected_at = datetime.now(timezone.utc).isoformat()
 
     # 결과 데이터를 담을 구조
