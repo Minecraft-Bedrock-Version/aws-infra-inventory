@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 def collect_ec2_network(region=None):
 
     session = boto3.Session(region_name=region)
-    ec2 = session.client("ec2")
+    ec2 = session.client("ec2", region_name="us-east-1")
 
     # 결과 데이터를 담을 구조
     items = {
