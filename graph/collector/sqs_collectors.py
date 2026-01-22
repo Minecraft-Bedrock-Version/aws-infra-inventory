@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 def collect_sqs(session, region: str) -> Dict[str, Any]:
     
     # 클라이언트 생성 및 시간 기록
-    client = session.client("sqs", region_name=region)
+    client = session.client("sqs", region_name="us-east-1")
     collected_at = datetime.now(timezone.utc).isoformat()
 
     queue_urls: List[str] = []
@@ -69,16 +69,3 @@ def _err(e: Exception) -> Dict[str, Any]:
             "ResponseMetadata": r.get("ResponseMetadata", {}),
         }
     return {"Error": {"Message": str(e)}}
-
-
-if __name__ == "__main__":
-    import argparse, boto3, json
-
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--profile", default=None)
-    ap.add_argument("--region", default="ap-northeast-2")
-    args = ap.parse_args()
-
-    sess = boto3.Session(profile_name=args.profile) if args.profile else boto3.Session()
-    data = collect_sqs(sess, args.region)
-    print(json.dumps(data, ensure_ascii=False, indent=2))
