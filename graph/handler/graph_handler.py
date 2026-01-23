@@ -1,6 +1,15 @@
 from datetime import datetime, timezone
 from typing import List, Dict, Any
 
+from graph_builder.iam_user_graph import transform_iam_users
+from graph_builder.iam_role_graph import transform_iam_roles
+from graph_builder.igw_graph import transform_igw_to_graph
+from graph_builder.ec2_graph import transform_ec2_to_graph
+from graph_builder.rds_graph import transform_rds_to_graph
+from graph_builder.route_table_graph import transform_route_table_to_graph
+from graph_builder.subnet_graph import transform_subnet_to_graph
+from graph_builder.vpc_graph import transform_to_graph_format transform_vpc
+
 
 class GraphAssembler:
 	    def assemble(self, resource_graphs: List[Dict[str, Any]]) -> Dict[str, Any]:
