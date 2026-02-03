@@ -1,11 +1,9 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
 
-# 제외 목록
+#제외할 Role 목록
 EXCLUDED_ROLES = {
+    "AWSServiceRoleForAmazonEventBridgeApiDestinations",
     "AWSServiceRoleForRDS",
     "AWSServiceRoleForResourceExplorer",
     "AWSServiceRoleForSupport",
@@ -13,111 +11,84 @@ EXCLUDED_ROLES = {
     "mbvCodebuildRole",
     "mbvEC2Role",
     "mbvLambdaGraphRole",
-    "mbvLambdaRole"
+    "mbvLambdaRole",
+    "mbvLambdaSlackRole"
 }
 
-def collect_iam_roles(session):
-    iam = session.client("iam", region_name="us-east-1")
-    
-    items = []
-    policy_content_cache = {}
-
-    # Managed Policy 내용 수집 및 캐싱
-    def get_cached_policy_statement(policy_arn, api_sources):
-    
-        if policy_arn in policy_content_cache:
-            return policy_content_cache[policy_arn]
-
-        try:
-            # 정책 메타데이터 조회
-            p_info = iam.get_policy(PolicyArn=policy_arn)
-            v_id = p_info["Policy"]["DefaultVersionId"]
-
-            # 정책 상세 명세 조회
-            p_ver = iam.get_policy_version(
-                PolicyArn=policy_arn,
-                VersionId=v_id
-            )
-
-            api_sources.extend([
-                "iam:GetPolicy",
-                "iam:GetPolicyVersion"
-            ])
-
-            statement = p_ver["PolicyVersion"]["Document"].get("Statement", [])
-            
-            policy_content_cache[policy_arn] = statement
-            return statement
-
-        except Exception as e:
-            print(f"[-] 정책 조회 실패: {policy_arn} - {e}")
-            return []
-
-    # 수집
+#IAM Role과 각 Role에 연결된 인라인, 관리형 정책 + 어떤 주체가 해당 Role을 Assume 할 수 있는지
+def collect_iam_role(session) -> Dict[str, Any]:
+    #API 호출용 객체 생성
+    iam = session.client("iam")
     paginator = iam.get_paginator("list_roles")
+    
+    #Role이 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    roles: List[Dict[str, Any]] = []
 
-    for page in paginator.paginate():
-        for role in page["Roles"]:
-            role_name = role["RoleName"]
+    #IAM ListRole API를 paginator로 반복 호출
+    for page in paginator.paginate(): #Role이 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        for role in page["Roles"]: #Roles 배열 안에 각 Role을 불러옴
+            role_name = role["RoleName"] #Role의 이름을 가져와 연결된 정책 조회에 사용
             
-            # 제외 목록 확인
+            #제외 대상 Role은 제외하여 호출
             if role_name in EXCLUDED_ROLES:
-                print(f"[!] Skipping excluded role: {role_name}")
+                print(f"[!] Skip role: {role_name}")
                 continue
+            
+            print(f"[+] Processing role: {role_name}")
 
-            print(f"[+] Processing Role: {role_name}")
+            #관리형 정책
+            attached_policies: List[Dict[str, Any]] = [] #저장될 구조
+            attached_paginator = iam.get_paginator("list_attached_role_policies") #호출 객체 생성
+            for attached_page in attached_paginator.paginate(RoleName=role_name):
+                for policy in attached_page["AttachedPolicies"]: #Role에 연결된 정책을 하나씩 추가
+                    versions = [] #버전 목록 저장용
+                    version_list = iam.list_policy_versions(PolicyArn=policy["PolicyArn"])["Versions"] #해당 정책의 버전 목록을 가져옴
+                    default_version_id = None 
+                    for v in version_list: #버전의 ID와 Default 여부를 표시
+                        versions.append({
+                            "VersionId": v["VersionId"],
+                            "IsDefaultVersion": v["IsDefaultVersion"],
+                            "Document": None 
+                        })
+                        if v["IsDefaultVersion"]: #만약 Default가 true라면
+                            default_version_id = v["VersionId"] #해당 버전을 일단 변수에 저장해두고,
 
-            api_sources = ["iam:ListRoles"]
-            attached_policies = []
-            inline_policies = []
+                    for v in versions: #각 버전의 정책 세부 내용 가져오기
+                        version_detail = iam.get_policy_version(
+                            PolicyArn=policy["PolicyArn"],
+                            VersionId=v["VersionId"]
+                        )
+                        v["Document"] = version_detail["PolicyVersion"]["Document"]
 
-            try:
-                # 1. Attached Policies
-                attached_paginator = iam.get_paginator("list_attached_role_policies")
-                for a_page in attached_paginator.paginate(RoleName=role_name):
-                    api_sources.append("iam:ListAttachedRolePolicies")
+                    #버전 목록(각 버전의 id와 default 여부, 정책 내용)을 저장
+                    policy["Versions"] = versions
+                    policy["DefaultVersionId"] = default_version_id #default 버전을 따로 명시
+                    attached_policies.append(policy)
 
-                    for p in a_page["AttachedPolicies"]:
+            inline_policies: List[str] = [] #저장될 구조
+            inline_paginator = iam.get_paginator("list_role_policies") #호출 객체 생성
+            for inline_page in inline_paginator.paginate(RoleName=role_name):
+                for policy_name in inline_page["PolicyNames"]: #연결된 인라인 정책의 내용을 불러옴
+                    policy_detail = iam.get_role_policy(RoleName=role_name, PolicyName=policy_name)
+                    inline_policies.append({
+                        "PolicyName": policy_name, #정책 이름
+                        "PolicyDocument": policy_detail["PolicyDocument"] #정책 내용 
+                    })
                     
-                        statement = get_cached_policy_statement(
-                            p["PolicyArn"],
-                            api_sources
-                        )
+            #어떤 주체가 Assume할 수 있는지 GET으로 확인
+            trust_policy = None
+            role_detail = iam.get_role(RoleName=role_name) #Role의 이름을 이용해 Get Role
+            if "AssumeRolePolicyDocument" in role_detail["Role"]: #AssumeRolePolicyDocument가 존재하면
+                trust_policy = role_detail["Role"]["AssumeRolePolicyDocument"] #trust_policy에 추가
 
-                        attached_policies.append({
-                            "policy_name": p["PolicyName"],
-                            "policy_arn": p["PolicyArn"],
-                            "statement": statement
-                        })
-                
-                # 2. Inline Policies 
-                inline_paginator = iam.get_paginator("list_role_policies")
-                for i_page in inline_paginator.paginate(RoleName=role_name):
-                    api_sources.append("iam:ListRolePolicies")
+            #최종적으로 Role 하나의 관리형, 인라인 정책과 Assume 대상 정보 저장
+            role["AttachedPolicies"] = attached_policies
+            role["InlinePolicies"] = inline_policies
+            role["AssumeRolePolicyDocument"] = trust_policy
 
-                    for p_name in i_page["PolicyNames"]:
-                        p_detail = iam.get_role_policy(
-                            RoleName=role_name,
-                            PolicyName=p_name
-                        )
-                        api_sources.append("iam:GetRolePolicy")
+            roles.append(role)
 
-                        inline_policies.append({
-                            "policy_name": p_name,
-                            "statement": p_detail["PolicyDocument"].get("Statement", [])
-                        })
-
-            except Exception as e:
-                print(f"[-] {role_name} 수집 중 에러: {e}")
-                continue
-						
-						# 출력
-            items.append({
-                "role": role,
-                "attached_policies": attached_policies,
-                "inline_policies": inline_policies,
-                "api_sources": list(set(api_sources)),
-                "collected_at": datetime.now(timezone.utc).isoformat()
-            })
-
-    return items
+    return {
+        "count": len(roles), #역할 수
+        "roles": roles #역할 리스트
+    }

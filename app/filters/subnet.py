@@ -2,17 +2,17 @@ def extract_subnet_for_vector(graph_data: dict) -> dict:
     vector_nodes = []
 
     for node in graph_data.get("nodes", []):
-        if node.get("type") != "subnet":
+        if node.get("node_type") != "subnet":
             continue
 
-        props = node.get("properties", {})
+        props = node.get("attributes", {})
 
         subnet_vector_node = {
-            "node_id": node.get("node_id") or node.get("id"),
+            "node_id": node.get("node_id"),
             "type": "subnet",
             "name": node.get("name"),
             "properties": {
-                "visibility": props.get("visibility")
+                "vpc_id": props.get("vpc_id")
             }
         }
         vector_nodes.append(subnet_vector_node)

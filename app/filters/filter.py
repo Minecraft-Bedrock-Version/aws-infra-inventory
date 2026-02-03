@@ -7,9 +7,9 @@ def extract_connected_subgraph(
 ) -> Dict[str, List]:
 
     node_index = {
-        (n.get("node_id") or n.get("id")): n
+        n.get("node_id"): n
         for n in graph_nodes
-        if (n.get("node_id") or n.get("id"))
+        if n.get("node_id")
     }
     adj = {n_id: [] for n_id in node_index}
     edge_map = {}

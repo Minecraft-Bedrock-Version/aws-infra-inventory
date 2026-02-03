@@ -1,81 +1,48 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
+import botocore
 
-
+#Lambda 함수
 def collect_lambda(session, region: str) -> Dict[str, Any]:
-    client = session.client("lambda", region_name="us-east-1")
+    #API 호출용 객체 생성
+    lambda_client = session.client("lambda", region_name=region)
+    paginator = lambda_client.get_paginator("list_functions")
+    
+    #함수가 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    functions: List[Dict[str, Any]] = []
 
-    collected_at = datetime.now(timezone.utc).isoformat()
-
-    raw_list_functions: List[Dict[str, Any]] = []
-    raw_get_function: Dict[str, Any] = {}
-    raw_get_policy: Dict[str, Any] = {}
-    raw_list_event_source_mappings: Dict[str, Any] = {}
-    raw_list_tags: Dict[str, Any] = {}
-
-    paginator = client.get_paginator("list_functions")
-
-    for page in paginator.paginate():
-        raw_list_functions.append(page)
-
-        for fn in page.get("Functions", []):
-            fn_name = fn.get("FunctionName")
-            fn_arn = fn.get("FunctionArn")
-            print(f"[+] Processing Lambda: {fn_name}")
-
+    #Lambda ListFunction API를 paginator로 반복 호출
+    for page in paginator.paginate(): #함수가 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        for function in page["Functions"]: #Functions 배열 안에 함수들을 가져옴
+            function_name = function["FunctionName"]
+            print(f"[+] Processing Lambda Function: {function_name}")
+                
+            #함수의 리소스 기반 정책 가져오기
             try:
-                gf = client.get_function(FunctionName=fn_name)
-                raw_get_function[fn_name] = gf
-            except botocore.exceptions.ClientError as e:
-                raw_get_function[fn_name] = {"__error__": _err(e)}
-
-            try:
-                pol = client.get_policy(FunctionName=fn_name)
-                raw_get_policy[fn_name] = pol
-            except botocore.exceptions.ClientError as e:
+                policy = lambda_client.get_policy(FunctionName=function_name)
+                function["ResourceBasedPolicy"] = policy.get("Policy", {})
+                
+            except botocore.exceptions.ClientError as e: #없을 경우 예외처리
                 code = e.response.get("Error", {}).get("Code")
-                if code not in ("ResourceNotFoundException", "ResourceNotFound"):
-                    raw_get_policy[fn_name] = {"__error__": _err(e)}
+                if code in ("ResourceNotFoundException", "ResourceNotFound"):
+                    policy = None
                 else:
-                    raw_get_policy[fn_name] = None
-
+                    policy = {"__error__": str(e)}
+                    
+            #이벤트 소스 매핑 (SQS 등 연결된 이벤트가 있는지)
+            esm_paginator = lambda_client.get_paginator("list_event_source_mappings")
+            event_source_mappings: List[Dict[str, Any]] = []
             try:
-                esm_p = client.get_paginator("list_event_source_mappings")
-                pages = []
-                for p in esm_p.paginate(FunctionName=fn_name):
-                    pages.append(p)
-                raw_list_event_source_mappings[fn_name] = pages
-            except botocore.exceptions.ClientError as e:
-                raw_list_event_source_mappings[fn_name] = {"__error__": _err(e)}
-
-            try:
-                tags = client.list_tags(Resource=fn_arn)
-                raw_list_tags[fn_name] = tags
-            except botocore.exceptions.ClientError as e:
-                raw_list_tags[fn_name] = {"__error__": _err(e)}
+                for p in esm_paginator.paginate(FunctionName=function_name):
+                    event_source_mappings.extend(p.get("EventSourceMappings", []))
+            except botocore.exceptions.ClientError: #없을 경우 예외 처리
+                event_source_mappings = []
+            function["EventSourceMappings"] = event_source_mappings
+            
+            functions.append(function) #위에 정의해둔 구조에 함수 딕셔너리를 하나씩 넣음
 
     return {
-        "service": "lambda",
-        "region": region,
-        "collected_at": collected_at,
-        "raw": {
-            "list_functions": raw_list_functions,
-            "get_function": raw_get_function,
-            "get_policy": raw_get_policy,
-            "list_event_source_mappings": raw_list_event_source_mappings,
-            "list_tags": raw_list_tags,
-        },
+        "region": region, #리전
+        "count": len(functions), #함수 개수
+        "functions": functions #함수 리스트
     }
-
-
-def _err(e: Exception) -> Dict[str, Any]:
-    if hasattr(e, "response"):
-        r = getattr(e, "response", {}) or {}
-        return {
-            "Error": r.get("Error", {}),
-            "ResponseMetadata": r.get("ResponseMetadata", {}),
-        }
-    return {"Error": {"Message": str(e)}}

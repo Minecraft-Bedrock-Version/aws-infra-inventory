@@ -1,66 +1,26 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
 
-def collect_rds(session, region: str):
-    client = session.client("rds", region_name="us-east-1")
-    collected_at = datetime.now(timezone.utc).isoformat()
+#RDS
+def collect_rds(session, region: str) -> Dict[str, Any]:
+    #API 호출용 객체 생성
+    rds = session.client("rds", region_name=region)
+    paginator = rds.get_paginator("describe_db_instances")
+    
+    #RDS 인스턴스가 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    instances: List[Dict[str, Any]] = []
 
-    # 결과 데이터를 담을 구조
-    items = {
-        "db_instances": [],
-        "db_clusters": [],
-        "db_subnet_groups": [],
-        "tags_by_arn": {},
-        "api_sources": [],
-        "region": region,
-        "collected_at": collected_at
+    #RDS DescribeDbInstances API를 paginator로 반복 호출
+    for page in paginator.paginate(): #인스턴스가 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        db_instances = page.get("DBInstances", [])
+        for db in db_instances:
+            instance_id = db.get("DBInstanceIdentifier")
+            print(f"[+] Processing RDS Instance: {instance_id}")
+
+            instances.append(db) #위에 정의해둔 구조에 인스턴스 딕셔너리를 하나씩 넣음
+
+    return {
+        "region": region, #리전
+        "count": len(instances), #인스턴스 개수
+        "instances": instances #인스턴스 리스트
     }
-
-		# 태그 수집
-    def _collect_tags(arn: str):
-        try:
-            resp = client.list_tags_for_resource(ResourceName=arn)
-            items["tags_by_arn"][arn] = resp.get("TagList", [])
-        except Exception:
-            items["tags_by_arn"][arn] = []
-
-    # 1. DB Instances
-    try:
-        api_vpc = ["rds:DescribeDBInstances"]
-        paginator = client.get_paginator("describe_db_instances")
-        for page in paginator.paginate():
-            for db in page.get("DBInstances", []):
-                print(f"[+] Processing Role: {db}")
-                items["db_instances"].append(db)
-
-                if db.get("DBInstanceArn"):
-                    _collect_tags(db["DBInstanceArn"])
-    except Exception as e:
-        print(f"[-] RDS Instances 수집 실패 ({region}): {e}")
-
-    # 2. DB Clusters 
-    try:
-        paginator = client.get_paginator("describe_db_clusters")
-        for page in paginator.paginate():
-            for cluster in page.get("DBClusters", []):
-                items["db_clusters"].append(cluster)
-                if cluster.get("DBClusterArn"):
-                    _collect_tags(cluster["DBClusterArn"])
-    except Exception as e:
-        print(f"[-] RDS Clusters 수집 실패 ({region}): {e}")
-
-    # 3. DB Subnet Groups 
-    try:
-        paginator = client.get_paginator("describe_db_subnet_groups")
-        for page in paginator.paginate():
-            for sg in page.get("DBSubnetGroups", []):
-                items["db_subnet_groups"].append(sg)
-                if sg.get("DBSubnetGroupArn"):
-                    _collect_tags(sg["DBSubnetGroupArn"])
-    except Exception as e:
-        print(f"[-] RDS Subnet Groups 수집 실패 ({region}): {e}")
-
-    return items

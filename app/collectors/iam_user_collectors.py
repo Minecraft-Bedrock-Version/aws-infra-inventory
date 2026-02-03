@@ -1,10 +1,7 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
 
-# 제외 목록
+#제외할 User 목록
 EXCLUDED_USERS = {
     "cg-web-sqs-manager-cgid7vg6yu5rd0",
     "cloudgoat_hyeok",
@@ -18,135 +15,127 @@ EXCLUDED_USERS = {
     "cg-sqs-user-cgid7vg6yu5rd0"
 }
 
-def collect_iam_users(session):
-    iam = session.client("iam", region_name="us-east-1")
-
-    users_raw = []
-    policy_content_cache = {}
-
-    # Managed Policy 내용 수집 및 캐싱
-    def get_cached_policy_statement(policy_arn, api_sources):
-    
-        if policy_arn in policy_content_cache:
-            return policy_content_cache[policy_arn]
-
-        try:
-            # 정책 정보 및 기본 버전 확인
-            p_info = iam.get_policy(PolicyArn=policy_arn)
-            v_id = p_info["Policy"]["DefaultVersionId"]
-
-            # 정책 상세 내용(버전) 확인
-            p_ver = iam.get_policy_version(
-                PolicyArn=policy_arn,
-                VersionId=v_id
-            )
-
-            api_sources.extend(["iam:GetPolicy", "iam:GetPolicyVersion"])
-            statement = p_ver["PolicyVersion"]["Document"].get("Statement", [])
-
-            policy_content_cache[policy_arn] = statement
-            return statement
-        except Exception:
-            return []
-
-    # 수집
+#IAM User와 각 User에 연결된 인라인, 관리형 정책 + 그룹과 그 그룹에 연결된 인라인, 관리형 정책 수집
+def collect_iam_user(session) -> Dict[str, Any]:
+    #API 호출용 객체 생성
+    iam = session.client("iam")
     paginator = iam.get_paginator("list_users")
+    
+    #User가 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    users: List[Dict[str, Any]] = []
 
-    for page in paginator.paginate():
-        for user in page["Users"]:
-            user_name = user["UserName"]
-            user_id = user["UserId"]
-            
-            # 제외 목록 확인
-            if user_name in EXCLUDED_USERS:
-                print(f"[!] Skipping excluded user: {user_name}")
+    #IAM ListUser API를 paginator로 반복 호출
+    for page in paginator.paginate(): #User가 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        for user in page["Users"]: #Users 배열 안에 각 User를 불러옴
+            username = user["UserName"] #User의 이름을 가져와 연결된 정책과 그룹 조회에 사용
+
+            #제외 대상 User는 제외하여 호출
+            if username in EXCLUDED_USERS:
+                print(f"[!] Skip user: {username}")
                 continue
             
-            print(f"[+] Processing User: {user_name}")
-
-            api_sources = ["iam:ListUsers"]
-            attached_policies = []
-            inline_policies = []
-            group_policies = []
-
-            try:
-                # 1. Attached Policy
-                attached = iam.list_attached_user_policies(UserName=user_name)
-                api_sources.append("iam:ListAttachedUserPolicies")
-
-                for p in attached["AttachedPolicies"]:
-                    statement = get_cached_policy_statement(p["PolicyArn"], api_sources)
-                    attached_policies.append({
-                        "policy_name": p["PolicyName"],
-                        "policy_arn": p["PolicyArn"],
-                        "statement": statement
-                    })
-
-                # 2. Inline Policies 
-                inline = iam.list_user_policies(UserName=user_name)
-                api_sources.append("iam:ListUserPolicies")
-
-                for p_name in inline["PolicyNames"]:
-                    p_detail = iam.get_user_policy(
-                        UserName=user_name,
-                        PolicyName=p_name
-                    )
-                    api_sources.append("iam:GetUserPolicy")
-
-                    inline_policies.append({
-                        "policy_name": p_name,
-                        "statement": p_detail["PolicyDocument"].get("Statement", [])
-                    })
-
-                # 3. Group Policies
-                groups = iam.list_groups_for_user(UserName=user_name)
-                api_sources.append("iam:ListGroupsForUser")
-
-                for g in groups["Groups"]:
-                    g_name = g["GroupName"]
-
-                    # 3-1. 그룹 Managed Policies
-                    g_attached = iam.list_attached_group_policies(GroupName=g_name)
-                    api_sources.append("iam:ListAttachedGroupPolicies")
-
-                    for gp in g_attached["AttachedPolicies"]:
-                        statement = get_cached_policy_statement(gp["PolicyArn"], api_sources)
-                        group_policies.append({
-                            "group_name": g_name,
-                            "policy_type": "Managed",
-                            "policy_name": gp["PolicyName"],
-                            "statement": statement
+            print(f"[+] Processing User: {username}")
+            
+            #관리형 정책
+            attached_policies: List[Dict[str, Any]] = [] #저장될 구조
+            attached_paginator = iam.get_paginator("list_attached_user_policies") #호출 객체 생성
+            for attached_page in attached_paginator.paginate(UserName=username):
+                for policy in attached_page["AttachedPolicies"]: #User에게 연결된 정책을 하나씩 추가
+                    versions = [] #버전 목록 저장용
+                    version_list = iam.list_policy_versions(PolicyArn=policy["PolicyArn"])["Versions"] #해당 정책의 버전 목록을 가져옴
+                    default_version_id = None 
+                    for v in version_list: #버전의 ID와 Default 여부를 표시
+                        versions.append({
+                            "VersionId": v["VersionId"],
+                            "IsDefaultVersion": v["IsDefaultVersion"],
+                            "Document": None 
                         })
+                        if v["IsDefaultVersion"]: #만약 Default가 true라면
+                            default_version_id = v["VersionId"] #해당 버전을 일단 변수에 저장해두고,
 
-                    # 3-2. 그룹 Inline Policies
-                    g_inline = iam.list_group_policies(GroupName=g_name)
-                    api_sources.append("iam:ListGroupPolicies")
-
-                    for gp_name in g_inline["PolicyNames"]:
-                        gp_detail = iam.get_group_policy(
-                            GroupName=g_name,
-                            PolicyName=gp_name
+                    for v in versions: #각 버전의 정책 세부 내용 가져오기
+                        version_detail = iam.get_policy_version(
+                            PolicyArn=policy["PolicyArn"],
+                            VersionId=v["VersionId"]
                         )
-                        api_sources.append("iam:GetGroupPolicy")
+                        v["Document"] = version_detail["PolicyVersion"]["Document"]
 
-                        group_policies.append({
-                            "group_name": g_name,
-                            "policy_type": "Inline",
-                            "policy_name": gp_name,
-                            "statement": gp_detail["PolicyDocument"].get("Statement", [])
-                        })
+                    #버전 목록(각 버전의 id와 default 여부, 정책 내용)을 저장
+                    policy["Versions"] = versions
+                    policy["DefaultVersionId"] = default_version_id #default 버전을 따로 명시
+                    attached_policies.append(policy)
 
-            except Exception as e:
-                print(f"[-] {user_name} 수집 중 에러 발생: {e}")
+            #인라인 정책
+            inline_policies: List[str] = [] #저장될 구조
+            inline_paginator = iam.get_paginator("list_user_policies") #호출 객체 생성
+            for inline_page in inline_paginator.paginate(UserName=username):
+                for policy_name in inline_page["PolicyNames"]: #연결된 인라인 정책의 내용을 불러옴
+                    policy_detail = iam.get_user_policy(UserName=username, PolicyName=policy_name)
+                    inline_policies.append({
+                        "PolicyName": policy_name, #정책 이름
+                        "PolicyDocument": policy_detail["PolicyDocument"] #정책 내용 
+                    })
+                    
+            #그룹
+            groups: List[Dict[str, Any]] = []
+            group_paginator = iam.get_paginator("list_groups_for_user") #호출 객체 생성
+            for group_page in group_paginator.paginate(UserName=username): #User에게 연결된 그룹을 하나씩 가져옴
+                for group in group_page["Groups"]: #Groups 배열 안에 그룹 들을 하나씩 불러와서
+                    group_name = group["GroupName"] #그룹의 정책 조회에 사용될 Group Name을 불러옴
 
-            # 출력
-            users_raw.append({
-                "user": user,
-                "attached_policies": attached_policies,
-                "inline_policies": inline_policies,
-                "group_policies": group_policies,
-                "api_sources": list(set(api_sources)),
-                "collected_at": datetime.now(timezone.utc).isoformat()
-            })
+                    #그룹 - 관리형 정책
+                    group_attached: List[Dict[str, Any]] = [] #저장될 구조
+                    attached_group_paginator = iam.get_paginator("list_attached_group_policies") #호출 객체 생성
+                    for g_attached_page in attached_group_paginator.paginate(GroupName=group_name):
+                        for policy in g_attached_page["AttachedPolicies"]: #Group에 연결된 정책을 하나씩 추가
+                            versions = [] #버전 목록 저장용
+                            version_list = iam.list_policy_versions(PolicyArn=policy["PolicyArn"])["Versions"] #해당 정책의 버전 목록을 가져옴
+                            default_version_id = None 
+                            for v in version_list: #버전의 ID와 Default 여부를 표시
+                                versions.append({
+                                    "VersionId": v["VersionId"],
+                                    "IsDefaultVersion": v["IsDefaultVersion"],
+                                    "Document": None 
+                                })
+                                if v["IsDefaultVersion"]: #만약 Default가 true라면
+                                    default_version_id = v["VersionId"] #해당 버전을 일단 변수에 저장해두고,
 
-    return users_raw
+                            for v in versions: #각 버전의 정책 세부 내용 가져오기
+                                version_detail = iam.get_policy_version(
+                                    PolicyArn=policy["PolicyArn"],
+                                    VersionId=v["VersionId"]
+                                )
+                                v["Document"] = version_detail["PolicyVersion"]["Document"]
+
+                            #버전 목록(각 버전의 id와 default 여부, 정책 내용)을 저장
+                            policy["Versions"] = versions
+                            policy["DefaultVersionId"] = default_version_id #default 버전을 따로 명시
+                            attached_policies.append(policy)
+
+                    #그룹 - 인라인 정책
+                    group_inline: List[str] = [] #저장될 구조
+                    inline_group_paginator = iam.get_paginator("list_group_policies") #호출 객체 생성
+                    for g_inline_page in inline_group_paginator.paginate(GroupName=group_name):
+                        for policy_name in g_inline_page["PolicyNames"]: #연결된 인라인 정책의 내용을 불러옴
+                            policy_detail = iam.get_group_policy(GroupName=group_name, PolicyName=policy_name)
+                            group_inline.append({
+                                "PolicyName": policy_name, #정책 이름
+                                "PolicyDocument": policy_detail["PolicyDocument"] #정책 내용 
+                            })
+                            
+                    #그룹에 연결된 정책을 그룹 딕셔너리에 추가
+                    group["AttachedPolicies"] = group_attached
+                    group["InlinePolicies"] = group_inline
+                    groups.append(group) 
+                    
+            #최종적으로 User 하나의 관리형, 인라인 정책과 Group 정보(그룹의 정책들도 포함하여) 저장
+            user["AttachedPolicies"] = attached_policies
+            user["InlinePolicies"] = inline_policies
+            user["Groups"] = groups
+
+            users.append(user)
+
+    return {
+        "count": len(users), #User 수
+        "users": users #User 리스트
+    }

@@ -1,103 +1,60 @@
-import json
+from __future__ import annotations
 from typing import Any, Dict, List
+import re
 
-def transform_lambda_to_graph(normalized_data: Any) -> Dict[str, Any]:
-    # 1. [방어 로직] 데이터가 문자열(str)로 들어올 경우를 대비한 역직렬화
-    curr = normalized_data
-    try:
-        for _ in range(3): # 최대 3번까지 중첩 JSON 해제 시도
-            if isinstance(curr, (str, bytes)):
-                curr = json.loads(curr)
-            else:
-                break
-    except Exception:
-        return {"nodes": [], "edges": []}
+#EC2 IP가 존재하는지 확인하기 위해 ip 패턴 정의
+IP_PATTERN = r"\b\d{1,3}(?:\.\d{1,3}){3}\b"
 
-    if not isinstance(curr, dict):
-        return {"nodes": [], "edges": []}
+def graph_lambda(raw_payload: Dict[str, Any], account_id: str, region: str, node=None) -> Dict[str, Any]:
+    #Edge 생성
+    functions = raw_payload.get("lambda", {}).get("functions", [])
+    edges = []
+    seen_edges = set() #edge 중복 생성을 막기위한 set
+    
+    ec2_instances = raw_payload.get("ec2", {}).get("instances", []) #raw data의 EC2 목록 불러오기 -> Lambda 환경 변수에 EC2 Ip 존재 여부 확인용
 
-    # 2. [구조 보정] RDS와 마찬가지로 {'nodes': {'nodes': [...]}} 구조 대응
-    outer_nodes = curr.get("nodes", {})
-    if isinstance(outer_nodes, dict):
-        nodes_payload = outer_nodes.get("nodes", [])
-        account_id = outer_nodes.get("account_id", curr.get("account_id", "unknown"))
-        collected_at = outer_nodes.get("collected_at", curr.get("collected_at"))
-    else:
-        # 바로 리스트가 들어있는 경우
-        nodes_payload = outer_nodes if isinstance(outer_nodes, list) else []
-        account_id = curr.get("account_id", "unknown")
-        collected_at = curr.get("collected_at")
-
-    graph_data = {
-        "schema_version": "1.0",
-        "collected_at": collected_at,
-        "account_id": account_id,
-        "nodes": [],
-        "edges": []
-    }
-
-    # 3. 노드 처리 루프
-    for node in nodes_payload:
-        if not isinstance(node, dict): continue
+    for function_value in functions: #Lambda 함수 순회
+        node_type = "lambda"
+        name = function_value.get("FunctionName")
+        node_id = f"{account_id}:{region}:{node_type}:{name}"
         
-        # 타입 체크 시 대소문자 방어
-        node_type = str(node.get("node_type", "")).lower()
-        n_id = node.get("node_id")
-        res_id = node.get("resource_id")
-        region = node.get("region", "us-east-1")
-        attrs = node.get("attributes", {})
-        rels = node.get("relationships", {})
-        name = node.get("name") or res_id
-        
-        # 3-1. Lambda Function 노드 (타입명 유연하게 체크)
-        if "function" in node_type or node_type == "lambda":
-            # [Linker 핵심] VPC 연결을 위한 SubnetId 추출
-            vpc_config = attrs.get("vpc_config", {})
-            subnet_ids = vpc_config.get("SubnetIds", []) if isinstance(vpc_config, dict) else []
-            
-            # [Linker 핵심] IAM 연결을 위한 Role 정보
-            # relationships에 있거나 attributes의 'role' 필드 확인
-            role_arn = rels.get("role_arn") or attrs.get("role")
-
-            new_node = {
-                "id": n_id,
-                "type": "lambda",
-                "name": name,
-                "arn": attrs.get("arn") or rels.get("function_arn"),
-                "region": region,
-                "properties": {
-                    "runtime": attrs.get("runtime"),
-                    "handler": attrs.get("handler"),
-                    "role_arn": role_arn, # Linker가 IAM Role 노드와 연결할 때 사용
-                    "subnets": subnet_ids, # Linker가 Subnet 노드와 연결할 때 사용
-                    "timeout": attrs.get("timeout"),
-                    "memory_size": attrs.get("memory_size"),
-                    "vpc_id": vpc_config.get("VpcId") if isinstance(vpc_config, dict) else None
-                }
-            }
-            graph_data["nodes"].append(new_node)
-
-            # 4-1. MEMBER_OF 엣지 (Lambda -> VPC) 직접 생성 (Linker 보조)
-            vpc_id = vpc_config.get("VpcId") if isinstance(vpc_config, dict) else None
-            if vpc_id:
-                graph_data["edges"].append({
-                    "id": f"edge:{res_id}:MEMBER_OF:{vpc_id}",
-                    "relation": "MEMBER_OF",
-                    "src": n_id,
-                    "dst": f"{account_id}:{region}:vpc:{vpc_id}",
-                    "directed": True
+        env_vars = function_value.get("Environment", {}).get("Variables", {}) #Lambda 환경 변수 불러오기
+        env_text = " ".join(env_vars.values()) #한 줄의 문자열로 만들어서 re.findall로 매칭 할 수 있는 형태로 만들기
+        found_ips = re.findall(IP_PATTERN, env_text) #IP 형태의 변수가 존재하는지 확인
+        for instance in ec2_instances: #인스턴스 목록 순회
+            instance_id = instance.get("InstanceId")
+            private_ip = instance.get("PrivateIpAddress")
+            public_ip = instance.get("PublicIpAddress")
+            ec2_node_id = f"{account_id}:{region}:ec2:{instance_id}"
+            for ip in found_ips: #변수에서 발견한 IP를 순회
+                if ip == private_ip or ip == public_ip: #해당 IP가 EC2의 private 또는 public ip와 일치한다면
+                    edge_id = f"edge:{name}:LAMBDA_CALL_EC2:{instance_id}"
+                    #Edge 생성
+                    if edge_id not in seen_edges:
+                        seen_edges.add(edge_id)
+                        edges.append({
+                            "id": edge_id,
+                            "relation": "LAMBDA_CALL_EC2",
+                            "src": node_id,
+                            "dst": ec2_node_id,
+                            "directed": True,
+                            "conditions": "This Lambda function's environment variables contain an EC2 public or private IP address. EC2 is accessible. For more information, check the role associated with the Lambda function."
+                        })
+                        
+                        
+        mappings = function_value.get("EventSourceMappings", []) #Event Source Mapping 안의 내용을 불러와서
+        for mapping in mappings: #순회
+            event_source_arn = mapping.get("EventSourceArn", "") #Event Source Arn을 불러옴
+            if event_source_arn.startswith("arn:aws:sqs"): #해당 arn의 시작이 sqs라면
+                queue_name = event_source_arn.split(":")[-1] #세미콜론을 기준으로 sqs의 이름만 가져옴
+                sqs_node_id = f"{account_id}:{region}:sqs:{queue_name}" #sqs nodeid 정의
+                edges.append({
+                    "id": f"edge:{queue_name}:SQS_TRIGGER_LAMBDA:{name}",
+                    "relation": "SQS_TRIGGER_LAMBDA",
+                    "src": sqs_node_id,
+                    "dst": node_id,
+                    "directed": True,
+                    "conditions": "I found the SQS Queue ARN in the Event Source Mapping of this Lambda function."
                 })
 
-        # 3-2. Event Source Mapping (예: SQS 연동)
-        elif "mapping" in node_type:
-            graph_data["nodes"].append({
-                "id": n_id,
-                "type": "lambda_event_source_mapping",
-                "name": name,
-                "properties": {
-                    "state": attrs.get("state"),
-                    "function_arn": attrs.get("function_arn")
-                }
-            })
-
-    return graph_data
+    return edges

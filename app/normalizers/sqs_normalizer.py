@@ -1,116 +1,50 @@
 from __future__ import annotations
-import json as json_lib
-from typing import Any, Dict, List
-from datetime import datetime, timezone
+from typing import Any, Dict
 
-def normalize_sqs(collected: Dict[str, Any], account_id: str, region: str):
-    
-    collected_at = collected.get("collected_at")
-    
-    raw_attrs_map = collected.get("raw", {}).get("get_queue_attributes", {})
-    raw_tags_map = collected.get("raw", {}).get("list_queue_tags", {})
-
+def normalize_sqs(raw_payload: Dict[str, Any], account_id: str, region: str):
+    queues = raw_payload.get("queues", [])
     nodes = []
 
-    for queue_url, attrs_resp in raw_attrs_map.items():
-        if "__error__" in attrs_resp:
-            continue
-            
-        attrs = attrs_resp.get("Attributes", {})
-        tags = raw_tags_map.get(queue_url, {}).get("Tags", {})
+    #SQS 노드
+    for sqs_value in queues:
+        attribure = sqs_value.get("Attributes")
+        attribure_arn = attribure.get("QueueArn")
         
-        queue_arn = attrs.get("QueueArn")
-        queue_name = _queue_name_from_url(queue_url)
+        node_type = "sqs"
+        name = attribure_arn.split(':')[-1]
+        node_id = f"{account_id}:{region}:{node_type}:{name}"
+        queue_url = sqs_value.get("QueueUrl")
+        visibility_timeout =  attribure.get("VisibilityTimeout")
+        max_message_size =  attribure.get("MaximumMessageSize")
+        message_retention_period =  attribure.get("MessageRetentionPeriod")
+        delay_seconds =  attribure.get("DelaySeconds")
+        receive_wait_time_seconds =  attribure.get("ReceiveMessageWaitTimeSeconds")
+        sse_enabled =  attribure.get("SqsManagedSseEnabled")
+        approximate_messages =  attribure.get("ApproximateNumberOfMessages")
+        created_timestamp =  attribure.get("CreatedTimestamp")
+        last_modified_timestamp =  attribure.get("LastModifiedTimestamp")
         
-        node_id = f"{account_id}:{region}:sqs:{queue_name}"
-
-        redrive_policy = attrs.get("RedrivePolicy")
-        dlq_arn = None
-        if redrive_policy:
-            try:
-                dlq_arn = json_lib.loads(redrive_policy).get("deadLetterTargetArn")
-            except Exception:
-                pass
-
         node = {
             "node_type": "sqs",
             "node_id": node_id,
-            "resource_id": queue_name,
-            "name": tags.get("Name", queue_name),
+            "resource_id": name,
+            "name": name,
             "account_id": account_id,
             "region": region,
             "attributes": {
                 "queue_url": queue_url,
-                "visibility_timeout": _int(attrs.get("VisibilityTimeout")),
-                "max_message_size": _int(attrs.get("MaximumMessageSize")),
-                "message_retention_period": _int(attrs.get("MessageRetentionPeriod")),
-                "delay_seconds": _int(attrs.get("DelaySeconds")),
-                "receive_wait_time_seconds": _int(attrs.get("ReceiveMessageWaitTimeSeconds")),
-                "sse_enabled": _bool(attrs.get("SqsManagedSseEnabled") or attrs.get("KmsMasterKeyId")),
-                "approximate_messages": _int(attrs.get("ApproximateNumberOfMessages")),
-                "created_timestamp": _int(attrs.get("CreatedTimestamp")),
-                "last_modified_timestamp": _int(attrs.get("LastModifiedTimestamp")),
-                "policy": attrs.get("Policy"), 
-            },
-            "relationships": {
-                "queue_arn": queue_arn,
-                "kms_key_id": attrs.get("KmsMasterKeyId"), 
-                "dead_letter_queue_arn": dlq_arn 
-            },
-            "raw_refs": {
-                "source": ["list_queues", "get_queue_attributes(All)"],
-                "collected_at": collected_at,
-            },
-        }
-        nodes.append(node)
-
-    return {
-        "schema_version": "1.0",
-        "collected_at": datetime.now(timezone.utc).isoformat(),
-        "account_id": account_id,
-        "nodes": nodes,
-    }
-
-def _queue_name_from_url(queue_url: str) -> str:
-    return queue_url.rstrip("/").split("/")[-1]
-
-def _int(v: Any) -> int | None:
-    if v is None: return None
-    try:
-        return int(v)
-    except (ValueError, TypeError):
-        return None
-
-def _bool(v: Any) -> bool:
-    if v is None: return False
-    if isinstance(v, bool): return v
-    if isinstance(v, str): return v.lower() == "true"
-    return bool(v)
-
-
-if __name__ == "__main__":
-
-    sample_collected = {
-        "region": "us-east-1",
-        "collected_at": "2026-01-16T05:54:06Z",
-        "raw": {
-            "get_queue_attributes": {
-                "https://sqs.us-east-1.amazonaws.com/288528695623/cash_charging_queue": {
-                    "Attributes": {
-                        "QueueArn": "arn:aws:sqs:us-east-1:288528695623:cash_charging_queue",
-                        "VisibilityTimeout": "30",
-                        "SqsManagedSseEnabled": "true",
-                        "CreatedTimestamp": "1768454340"
-                    }
-                }
-            },
-            "list_queue_tags": {
-                "https://sqs.us-east-1.amazonaws.com/288528695623/cash_charging_queue": {
-                    "Tags": {"Name": "charging-queue"}
-                }
+                "visibility_timeout": visibility_timeout,
+                "max_message_size": max_message_size,
+                "message_retention_period": message_retention_period,
+                "delay_seconds": delay_seconds,
+                "receive_wait_time_seconds": receive_wait_time_seconds,
+                "sse_enabled": sse_enabled,
+                "approximate_messages": approximate_messages,
+                "created_timestamp": created_timestamp,
+                "last_modified_timestamp": last_modified_timestamp
             }
         }
-    }
-    
-    result = normalize_sqs(sample_collected, "288528695623")
-    print(json_lib.dumps(result, indent=2))
+
+        nodes.append(node)
+
+    return nodes

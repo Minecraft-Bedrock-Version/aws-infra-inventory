@@ -1,78 +1,35 @@
-from datetime import datetime, timezone
+from __future__ import annotations
+from typing import Any, Dict
 
-def normalize_statements(statements):
-
-    normalized = []
-
-    for s in statements:
-        action = s.get("Action", [])
-        resource = s.get("Resource", [])
-
-        if isinstance(action, str):
-            action = [action]
-
-        if isinstance(resource, str):
-            resource = [resource]
-        
-        # Resource가 없으면 wildcard로 설정
-        if not resource:
-            resource = ["*"]
-
-        normalized.append({
-            "Effect": s.get("Effect"),
-            "Action": action,
-            "Resource": resource
-        })
-
-    return normalized
-
-
-def normalize_policy_list(policies):
-
-    normalized = []
-
-    for p in policies:
-        normalized.append({
-            "PolicyName": p.get("policy_name"),
-            "PolicyArn": p.get("policy_arn"),
-            "Statement": normalize_statements(p.get("statement", []))
-        })
-
-    return normalized
-
-
-def normalize_iam_roles(items, account_id, region="global"):
-
+def normalize_iam_roles(raw_payload: Dict[str, Any], account_id: str, region="global") -> Dict[str, Any]:
+    roles = raw_payload.get("roles",[])
     nodes = []
 
-    for item in items:
-        role = item["role"]
-
-        role_id = role["RoleId"]
-        role_name = role["RoleName"]
+    for role_value in roles:
+        name = role_value.get("RoleName")
+        
+        node_type = "iam_role"
+        node_id = f"{account_id}:{node_type}:{name}"
+        resource_id = role_value.get("RoleId")
+        arn = role_value.get("Arn")
+        create_date = role_value.get("CreateDate")
+        assume_role_policy = role_value.get("AssumeRolePolicyDocument",[])
+        attached_policies = role_value.get("AttachedPolicies", [])
+        inline_policies = role_value.get("InlinePolicies", [])
 
         node = {
-            "node_type": "iam_role",
-            "node_id": f"{account_id}:{region}:iam_role:{role_id}",
-            "resource_id": role_id,
-            "name": role_name,
-
+            "node_type": node_type,
+            "node_id": node_id,
+            "resource_id": resource_id,
+            "name": name,
+            "account_id": account_id,
+            "region": region,
             "attributes": {
-                "arn": role["Arn"],
-                "assume_role_policy": role.get("AssumeRolePolicyDocument"),
-                
-                "inline_policies": normalize_policy_list(
-                    item.get("inline_policies", [])
-                ),
-
-                "attached_policies": normalize_policy_list(
-                    item.get("attached_policies", [])
-                )
-            },
-
-            "raw_refs": {
-                "source": sorted(list(set(item.get("api_sources", [])))),
-                "collected_at": item.get("collected_at")
+                "arn": arn,
+                "create_date": create_date.isoformat(),
+                "assume_role_policy": assume_role_policy,
+                "attached_policies": attached_policies,
+                "inline_policies": inline_policies
             }
         }
 

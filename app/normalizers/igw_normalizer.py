@@ -1,44 +1,33 @@
-from datetime import datetime, timezone
+from __future__ import annotations
+from typing import Any, Dict
 
-def extract_name_from_tags(tags):
-    if not tags: return None
-    for tag in tags:
-        if tag["Key"] == "Name":
-            return tag["Value"]
-    return None
-
-def normalize_igws(collected, account_id, region):
+def normalize_igws(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dict[str, Any]:
+    #Node 생성
+    igws = raw_payload.get("InternetGateways", [])
     nodes = []
-    # collected 자체가 이미 평탄화된 IGW 리스트입니다.
-    items = collected
-
-    for item in items:
-        # AS-IS: igw = item["igw"] (에러 발생 지점)
-        # TO-BE: item을 직접 사용
-        igw = item
-        igw_id = igw.get("InternetGatewayId")
-        if not igw_id: continue # 방어 코드
+    for igw_value in igws:
+        tags = igw_value.get("Tags", [])
+        attached = igw_value.get("Attachments")
         
-        igw_name = extract_name_from_tags(igw.get("Tags", []))
-        
-        attachments = igw.get("Attachments", [])
-        attached_vpc_id = attachments[0].get("VpcId") if attachments else None
-        state = attachments[0].get("State") if attachments else "detached"
+        #각 필드를 채우기 위한 값
+        node_type = "igw"
+        igw_id = igw_value.get("InternetGatewayId")
+        node_id = f"{account_id}:{region}:{node_type}:{igw_id}"
+        #resoucre id == igw id
+        name = next((tag['Value'] for tag in tags if tag['Key'] == 'Name'), None)
+        attached_vpc_id = attached[0].get("VpcId")
+        state = attached[0].get("State")
 
         node = {
-            "node_type": "internet_gateway",
-            "node_id": f"{account_id}:{region}:igw:{igw_id}",
+            "node_type": node_type,
+            "node_id": node_id,
             "resource_id": igw_id,
-            "name": igw_name or igw_id,
+            "name": name or igw_id,
             "attributes": {
                 "attached_vpc_id": attached_vpc_id,
                 "state": state
-            },
-            "raw_refs": {
-                "source": item.get("api_sources", ["ec2:DescribeInternetGateways"]),
-                "collected_at": item.get("collected_at")
             }
         }
         nodes.append(node)
-
+    
     return nodes

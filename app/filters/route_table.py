@@ -2,17 +2,17 @@ def extract_route_table_for_vector(graph_data: dict) -> dict:
     vector_nodes = []
 
     for node in graph_data.get("nodes", []):
-        if node.get("type") != "route_table":
+        if node.get("node_type") != "route_table":
             continue
 
-        props = node.get("properties", {})
+        props = node.get("attributes", {})
 
         route_table_vector_node = {
-            "node_id": node.get("node_id") or node.get("id"),
+            "node_id": node.get("node_id"),
             "type": "route_table",
             "name": node.get("name"),
             "properties": {
-                "type": props.get("type")
+                "vpc": props.get("vpc_id")
             }
         }
         vector_nodes.append(route_table_vector_node)

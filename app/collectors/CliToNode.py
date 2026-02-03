@@ -150,12 +150,12 @@ def cli_put_user_policy_to_iam_user_json(
 
     inline_policy_obj = {
         "PolicyName": policy_name,
-        "Statement": [_normalize_statement(s) for s in statements if isinstance(s, dict)],
+        "PolicyDocument": {"Statement": [_normalize_statement(s) for s in statements if isinstance(s, dict)]},
     }
 
     # node_id / resource_id 전략(팀 내에서 규칙 정하면 거기에 맞추면 됨)
     node_type = "iam_user"
-    node_id = f"{node_type}:{account_id}:{user_name}"
+    node_id = f"{account_id}:{node_type}:{user_name}"
     resource_id = user_name  # IAM User의 경우 이름을 리소스 식별자로 쓰는 전략
 
     out = {

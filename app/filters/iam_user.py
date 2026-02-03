@@ -1,44 +1,73 @@
 def extract_iam_user_for_vector(graph_data: dict) -> dict:
     vector_nodes = []
 
-    for node in graph_data.get("nodes", []):
-        if node.get("type") != "iam_user":
+    user_nodes = graph_data.get("iam_user", {}).get("nodes", []) or graph_data.get("nodes", [])
+
+    for node in user_nodes:
+        if node.get("node_type") != "iam_user":
             continue
 
-        props = node.get("properties", {})
-        
-        # [수정] inline_policies를 가져온 후 리스트인지 확인
-        inline_policies_raw = props.get("inline_policies", [])
-        inline_policies = []
+        attributes = node.get("attributes", {})
 
-        if isinstance(inline_policies_raw, list):
-            for policy in inline_policies_raw:
-                # 개별 정책이 dict 형태인지 한 번 더 확인
-                if not isinstance(policy, dict):
-                    continue
-                    
-                statements = []
-                # Statement가 리스트인지 확인하며 루프
-                raw_statements = policy.get("Statement", [])
-                if isinstance(raw_statements, list):
-                    for stmt in raw_statements:
-                        statements.append({
+        inline_policies = []
+        attached_policies = []
+        group_policies = []
+
+        # -------- Inline Policies --------
+        for policy in attributes.get("inline_policies", []):
+            if not isinstance(policy, dict):
+                continue
+
+            policy_doc = policy.get("PolicyDocument", {})
+            for stmt in policy_doc.get("Statement", []):
+                inline_policies.append({
+                    "Effect": stmt.get("Effect"),
+                    "Action": stmt.get("Action"),
+                    "Resource": stmt.get("Resource"),
+                })
+
+        # -------- Attached Policies --------
+        for policy in attributes.get("attached_policies", []):
+            if not isinstance(policy, dict):
+                continue
+
+            for version in policy.get("Versions", []):
+                if version.get("IsDefaultVersion") is True:
+                    for stmt in version.get("Document", {}).get("Statement", []):
+                        attached_policies.append({
                             "Effect": stmt.get("Effect"),
-                            "Action": stmt.get("Action")
+                            "Action": stmt.get("Action"),
+                            "Resource": stmt.get("Resource"),
                         })
 
-                if statements:
-                    inline_policies.append({"Statement": statements})
+        # -------- Group Policies --------
+        for group_policy_list in attributes.get("group_policies", []):
+            if not isinstance(group_policy_list, list):
+                continue
+
+            for policy in group_policy_list:
+                if not isinstance(policy, dict):
+                    continue
+
+                policy_doc = policy.get("PolicyDocument", {})
+                for stmt in policy_doc.get("Statement", []):
+                    group_policies.append({
+                        "Effect": stmt.get("Effect"),
+                        "Action": stmt.get("Action"),
+                        "Resource": stmt.get("Resource"),
+                    })
 
         iam_user_vector_node = {
-            # GraphAssembler 포맷에 따라 id 또는 node_id 선택
-            "node_id": node.get("node_id") or node.get("id"),
+            "node_id": node.get("node_id"),
             "type": "iam_user",
             "name": node.get("name"),
             "properties": {
-                "inline_policies": inline_policies
+                "inline_policies": inline_policies,
+                "attached_policies": attached_policies,
+                "group_policies": group_policies
             }
         }
+
         vector_nodes.append(iam_user_vector_node)
 
     return {"nodes": vector_nodes}

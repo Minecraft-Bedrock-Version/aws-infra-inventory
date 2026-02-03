@@ -2,16 +2,17 @@ def extract_igw_for_vector(graph_data: dict) -> dict:
     vector_nodes = []
 
     for node in graph_data.get("nodes", []):
-        if node.get("type") != "internet_gateway":
+        if node.get("node_type") != "igw":
             continue
 
-        props = node.get("properties", {})
+        props = node.get("attributes", {})
 
         igw_vector_node = {
-            "node_id": node.get("node_id") or node.get("id"),
-            "type": "internet_gateway",
+            "node_id": node.get("node_id"),
+            "type": "igw",
             "name": node.get("name"),
             "properties": {
+                "attached_vpc_id": props.get("attached_vpc_id"),
                 "state": props.get("state")
             }
         }

@@ -2,14 +2,13 @@ def extract_vpc_for_vector(graph_data: dict) -> dict:
     vector_nodes = []
 
     for node in graph_data.get("nodes", []):
-        if node.get("type") != "vpc":
+        if node.get("node_type") != "vpc":
             continue
 
         vpc_vector_node = {
-            "node_id": node.get("node_id") or node.get("id"),
+            "node_id": node.get("node_id"),
             "type": "vpc",
-            "name": node.get("name"),
-            "properties": {}
+            "name": node.get("name")
         }
         vector_nodes.append(vpc_vector_node)
 

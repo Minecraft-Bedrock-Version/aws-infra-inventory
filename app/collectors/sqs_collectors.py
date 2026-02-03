@@ -1,71 +1,37 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
 
-
+#SQS
 def collect_sqs(session, region: str) -> Dict[str, Any]:
-    
-    # 클라이언트 생성 및 시간 기록
-    client = session.client("sqs", region_name="us-east-1")
-    collected_at = datetime.now(timezone.utc).isoformat()
+    #API 호출용 객체 생성
+    sqs = session.client("sqs", region_name=region)
+    paginator = sqs.get_paginator("list_queues")
 
-    queue_urls: List[str] = []
-    raw_list_queues: List[Dict[str, Any]] = []
+    #SQS 큐가 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    queues: List[Dict[str, Any]] = []
 
-    # 1. queue 목록
-    next_token = None
-    while True:
-        kwargs = {}
-        if next_token:
-            kwargs["NextToken"] = next_token
-				
-        resp = client.list_queues(**kwargs)
-        raw_list_queues.append(resp)
+    #SQS ListQueues API를 paginator로 반복 호출
+    for page in paginator.paginate(): #큐가 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        queue_urls = page.get("QueueUrls", [])
+        for queue_url in queue_urls:
+            print(f"[+] Processing SQS Queue: {queue_url}")
 
-        queue_urls.extend(resp.get("QueueUrls", []))
-
-        next_token = resp.get("NextToken")
-        if not next_token:
-            break
-
-    raw_get_queue_attributes: Dict[str, Any] = {}
-    raw_list_queue_tags: Dict[str, Any] = {}
-
-    for url in queue_urls:
-        try:
-            attrs_resp = client.get_queue_attributes(
-                QueueUrl=url,
+            #속성값 가져오기
+            attributes = sqs.get_queue_attributes(
+                QueueUrl=queue_url,
                 AttributeNames=["All"]
-            )
-            raw_get_queue_attributes[url] = attrs_resp
-        except botocore.exceptions.ClientError as e:
-            raw_get_queue_attributes[url] = {"__error__": _err(e)}
+            ).get("Attributes", {})
 
-        try:
-            tags_resp = client.list_queue_tags(QueueUrl=url)
-            raw_list_queue_tags[url] = tags_resp
-        except botocore.exceptions.ClientError as e:
-            raw_list_queue_tags[url] = {"__error__": _err(e)}
+            #URL과 속성 묶어서
+            queue_info = {
+                "QueueUrl": queue_url,
+                "Attributes": attributes
+            }
+
+            queues.append(queue_info) #최종 저장
 
     return {
-        "service": "sqs",
-        "region": region,
-        "collected_at": collected_at,
-        "raw": {
-            "list_queues": raw_list_queues,
-            "get_queue_attributes": raw_get_queue_attributes,
-            "list_queue_tags": raw_list_queue_tags,
-        },
+        "region": region, #리전
+        "count": len(queues), #큐 개수
+        "queues": queues #큐 리스트
     }
-
-
-def _err(e: Exception) -> Dict[str, Any]:
-    if hasattr(e, "response"):
-        r = getattr(e, "response", {}) or {}
-        return {
-            "Error": r.get("Error", {}),
-            "ResponseMetadata": r.get("ResponseMetadata", {}),
-        }
-    return {"Error": {"Message": str(e)}}

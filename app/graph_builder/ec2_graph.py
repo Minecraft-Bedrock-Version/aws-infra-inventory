@@ -1,189 +1,92 @@
-import json
-from typing import Any, Dict, List
+from __future__ import annotations
+from typing import Any, Dict
+import re
 
-def transform_ec2_to_graph(ec2_normalized_data: Any) -> Dict[str, Any]:
-    # 1. [방어 로직] 문자열 데이터 역직렬화 및 타입 체크
-    curr = ec2_normalized_data
-    try:
-        for _ in range(3):
-            if isinstance(curr, (str, bytes)):
-                curr = json.loads(curr)
-            else:
-                break
-    except Exception:
-        return {"nodes": [], "edges": []}
+SQS_PATTERN = r"(https://sqs\.[a-z0-9-]+\.amazonaws\.com/[^\s'\"]+)"
+RDS_PATTERN = r"[^\s'\"/]+\.([a-z0-9-]+)\.rds\.amazonaws\.com"
 
-    if not isinstance(curr, dict):
-        return {"nodes": [], "edges": []}
+def graph_ec2(raw_payload: Dict[str, Any], account_id: str, region: str, node=None) -> Dict[str, Any]:
+    
+    instances = raw_payload.get("ec2", {}).get("instances", [])
+    #Edge 생성
+    edges = []
+    seen_edges = set() #edge 중복 생성을 막기위한 set
+    
+    for instance_value in instances: #raw data에서 인스턴스를 하나씩 조회
+        instance_id = instance_value.get("InstanceId")
+        node_id = f"{account_id}:{region}:ec2:{instance_id}"
+                       
+        public_ip = instance_value.get("PublicIpAddress") #public ip 읽어옴
 
-    # 2. [구조 보정] 중첩된 {'nodes': {'nodes': [...]}} 구조 대응
-    outer_nodes = curr.get("nodes", {})
-    if isinstance(outer_nodes, dict):
-        nodes_payload = outer_nodes.get("nodes", [])
-        account_id = outer_nodes.get("account_id", curr.get("account_id", "288528695623"))
-    else:
-        nodes_payload = outer_nodes if isinstance(outer_nodes, list) else []
-        account_id = curr.get("account_id", "288528695623")
+        if public_ip: #인스턴스에 public ip가 존재한다면
+            instance_subnet = instance_value.get("SubnetId") #인스턴스의 서브넷을 불러오고,
+            route_tables = raw_payload.get("route_table", {}).get("RouteTables", []) #라우트 테이블 raw data도 불러와서
+            for route_table in route_tables: #라우트 테이블 목록 순회
+                associations = route_table.get("Associations", []) 
+                associated = False #Associations 내부에 subnet id가 잇는지 확인
+                for assoc in associations: #Associations 순회
+                    if assoc.get("SubnetId") == instance_subnet: #인스턴스와 일치하는 서브넷 id가 있으면
+                        associated = True #true로 변경
+                if not associated: #순회 다 했는데 False 그대로면 종료
+                    continue
+                for route in route_table.get("Routes", []): #True 값이면 해당 라우트 테이블의 Associations 내부 Routes 목록 순회하며
+                    gateway_id = route.get("GatewayId") #igw id와 
+                    destination = route.get("DestinationCidrBlock") #cidr 블록을 꺼내옴
+                    #만약 igw가 존재하고, cidr 블록이 모든 ip 대역으로 열려있으면 (public) edge 생성
+                    if gateway_id and destination == "0.0.0.0/0":
+                        igw_node_id = f"{account_id}:{region}:igw:{gateway_id}"
+                        edge_id = f"edge:{instance_id}:EC2_ACCESS_IGW:{gateway_id}"
+                        if edge_id not in seen_edges:
+                            seen_edges.add(edge_id)
+                            edges.append({
+                                "id": edge_id,
+                                "relation": "EC2_PUBLIC",
+                                "src": node_id,
+                                "dst": igw_node_id,
+                                "directed": False,
+                                "conditions": "EC2 is assigned a public IP, and the subnet where EC2 is located is connected to an IGW that can communicate externally through the route table."
+                            })
 
-    graph_data = {
-        "schema_version": "1.0",
-        "collected_at": curr.get("collected_at") if isinstance(curr, dict) else None,
-        "account_id": account_id,
-        "nodes": [],
-        "edges": []
-    }
-
-    # 3. KeyPair ID 매핑을 위한 사전 준비 (중복 순회 방지 및 안전한 접근)
-    key_name_to_node_id = {}
-    for node in nodes_payload:
-        if not isinstance(node, dict): continue
-        if str(node.get("node_type")).lower() == "key_pair":
-            key_name_to_node_id[node.get("name")] = node.get("node_id")
-
-    # 4. 노드 및 엣지 생성 메인 루프
-    for node in nodes_payload:
-        if not isinstance(node, dict): continue
+        user_data = instance_value.get("UserData", "") #user data 읽어옴
         
-        n_type = str(node.get("node_type", "")).lower()
-        n_id = node.get("node_id")
-        res_id = node.get("resource_id")
-        region = node.get("region", "us-east-1")
-        attrs = node.get("attributes", {})
-        rels = node.get("relationships", {})
-        name = node.get("name") or res_id
-
-        # 4-1. EC2 Instance 노드 처리
-        if "instance" in n_type:
-            # [Linker 핵심] 서브넷 및 IAM 프로파일 정보 추출
-            subnet_id = attrs.get("subnet_id") or rels.get("subnet_id")
-            iam_profile = attrs.get("iam_instance_profile") or rels.get("iam_instance_profile")
-            vpc_id = attrs.get("vpc_id") or rels.get("vpc_id")
-            public_ip = attrs.get("public_ip")
-            is_public = public_ip is not None
-
-            new_node = {
-                "id": n_id,
-                "type": "ec2_instance",
-                "name": name,
-                "arn": f"arn:aws:ec2:{region}:{account_id}:instance/{res_id}",
-                "region": region,
-                "properties": {
-                    "instance_type": attrs.get("instance_type"),
-                    "state": attrs.get("state"),
-                    "public_ip": public_ip,
-                    "private_ip": attrs.get("private_ip"),
-                    "subnet_id": subnet_id,    # Linker가 Subnet과 연결할 때 사용
-                    "iam_profile": iam_profile, # Linker가 IAM Role과 연결할 때 사용
-                    "public": is_public,       # Linker가 IGW와 연결할 때 사용
-                    "vpc_id": vpc_id           # Linker가 IGW와 연결할 때 사용
-                }
-            }
-            graph_data["nodes"].append(new_node)
-
-            # [Edge] USES_KEY: 인스턴스와 키 페어 연결
-            key_name = attrs.get("key_name")
-            if key_name and key_name in key_name_to_node_id:
-                graph_data["edges"].append({
-                    "id": f"edge:{res_id}:USES_KEY:{key_name}",
-                    "relation": "USES_KEY",
-                    "src": n_id,
-                    "dst": key_name_to_node_id[key_name],
-                    "directed": True
-                })
-
-            # [Edge] MEMBER_OF: VPC 연결
-            vpc_id = attrs.get("vpc_id") or rels.get("vpc_id")
-            if vpc_id:
-                graph_data["edges"].append({
-                    "id": f"edge:{res_id}:MEMBER_OF:{vpc_id}",
-                    "relation": "MEMBER_OF",
-                    "src": n_id,
-                    "dst": f"{account_id}:{region}:vpc:{vpc_id}",
-                    "directed": True
-                })
-
-            # [Edge] CONNECTS_TO_RDS: EC2가 RDS를 감지한 경우
-            rds_info = attrs.get("rds_info", {})
-            if isinstance(rds_info, dict) and rds_info.get("detected"):
-                # EC2의 rds_info에는 RDS의 node_id가 포함되어야 함
-                rds_node_id = rds_info.get("node_id")
-                if rds_node_id:
-                    graph_data["edges"].append({
-                        "id": f"edge:{res_id}:CONNECTS_TO_RDS:{rds_node_id}",
-                        "relation": "CONNECTS_TO_RDS",
-                        "src": n_id,
-                        "dst": rds_node_id,
-                        "directed": False,
-                        "conditions": [
-                            {
-                                "ec2": {
-                                    "attributes": {
-                                        "rds_info": {
-                                            "detected": True
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    })
-
-            # [Edge] ACCESSES_SQS: EC2가 SQS를 감지한 경우
-            sqs_info = attrs.get("sqs_info", {})
-            if isinstance(sqs_info, dict) and sqs_info.get("detected"):
-                sqs_node_id = sqs_info.get("node_id")
-                if sqs_node_id:
-                    graph_data["edges"].append({
-                        "id": f"edge:{res_id}:ACCESSES_SQS:{sqs_node_id}",
-                        "relation": "ACCESSES_SQS",
-                        "src": n_id,
-                        "dst": sqs_node_id,
-                        "directed": True,
-                        "conditions": [
-                            {
-                                "ec2": {
-                                    "attributes": {
-                                        "sqs_info": {
-                                            "detected": True
-                                        }
-                                    }
-                                }
-                            }
-                        ]
-                    })
-
-            # [Edge] CONNECTED_TO_IGW: EC2가 public이고 IGW가 있는 경우
-            igw_info = attrs.get("igw_info", {})
-            if isinstance(igw_info, dict) and igw_info.get("detected"):
-                igw_node_id = igw_info.get("node_id")
-                if igw_node_id:
-                    graph_data["edges"].append({
-                        "id": f"edge:{res_id}:CONNECTED_TO_IGW:{igw_node_id}",
-                        "relation": "CONNECTED_TO_IGW",
-                        "src": n_id,
-                        "dst": igw_node_id,
-                        "directed": False,
-                        "conditions": [
-                            {
-                                "ec2": {
-                                    "attributes": {
-                                        "public": True
-                                    }
-                                }
-                            }
-                        ]
-                    })
-
-        # 4-2. Key Pair 노드 처리
-        elif "key" in n_type:
-            graph_data["nodes"].append({
-                "id": n_id,
-                "type": "key_pair",
-                "name": name,
-                "region": region,
-                "properties": {
-                    "key_type": attrs.get("key_type"),
-                    "key_fingerprint": attrs.get("key_fingerprint")
-                }
-            })
-
-    return graph_data
+        for match in re.findall(SQS_PATTERN, user_data): #sqs url이 userdata에 포함되어 있는지 확인
+            queues = raw_payload.get("sqs", {}).get("queues", []) #찾는다면 sqs raw data에서
+            for queue in queues: #queue를 모두 읽음
+                queue_url = queue.get("QueueUrl", "")
+                attributes = queue.get("Attributes", {})
+                attribure_arn = attributes.get("QueueArn")
+                name = attribure_arn.split(':')[-1]
+                if match in queue_url: #user data에 포함된 q url이랑 일치하는 url을 지녔다면
+                    edge_id = f"edge:{instance_id}:EC2_ACCESS_SQS:{name}" #edge id 미리 생성 (중복 방지)
+                    if edge_id not in seen_edges: #edgeid가 seen_edges에 포함되어있지 않으면
+                        seen_edges.add(edge_id) #해당 edge id를 seen edges에 넣고,
+                        sqs_node_id = f"{account_id}:{region}:sqs:{name}" #sqs node id를 정의된 형식에 맞게 생성하여
+                        edges.append({ #edges에 edge 추가
+                            "id": edge_id,
+                            "relation": "EC2_ACCESS_SQS",
+                            "src": node_id,
+                            "dst": sqs_node_id,
+                            "directed": True,
+                            "conditions": "The user data for the EC2 instance contains the URL of the SQS queue. You can call SQS from EC2. For more information, see Roles Associated with EC2."
+                        })
+                    
+        for match in re.findall(RDS_PATTERN, user_data): #rds endpoint가 userdata에 포함되어 있는지 확인
+            rds_instances = raw_payload.get("rds", {}).get("instances", [])  #찾는다면 rds raw data에서
+            for rds in rds_instances: #instance를 모두 읽음
+                rds_id = rds.get("DBInstanceIdentifier", "")
+                endpoint = rds.get("Endpoint", {}).get("Address", "")
+                if match in endpoint: #user data에 포함된 endpoint랑 일치하는 endpoint를 지녔다면
+                    edge_id = f"edge:{instance_id}:EC2_ACCESS_RDS:{rds_id}" #edge id 미리 생성 (중복 방지)
+                    if edge_id not in seen_edges: #edgeid가 seen_edges에 포함되어있지 않으면
+                        seen_edges.add(edge_id) #해당 edge id를 seen edges에 넣고,
+                        rds_node_id = f"{account_id}:{region}:rds:{rds_id}" #rds node id를 정의된 형식에 맞게 생성하여
+                        edges.append({ #edges에 edge 추가
+                            "id": edge_id,
+                            "relation": "EC2_ACCESS_RDS",
+                            "src": node_id,
+                            "dst": rds_node_id,
+                            "directed": False,
+                            "conditions": "The user data for the EC2 instance contains the endpoint of the RDS. You can access RDS from EC2. For more information, see Roles Associated with EC2."
+                        })
+                        
+    return edges

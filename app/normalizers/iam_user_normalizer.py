@@ -1,80 +1,35 @@
-from datetime import datetime, timezone
+from __future__ import annotations
+from typing import Any, Dict
 
-def normalize_statements(statements):
-    normalized = []
-
-    for s in statements: 
-        action = s.get("Action", [])
-        resource = s.get("Resource", [])
-				
-        if isinstance(action, str):
-            action = [action]
-
-        if isinstance(resource, str):
-            resource = [resource]
-        
-        # Resource가 없으면 wildcard로 설정
-        if not resource:
-            resource = ["*"]
-
-        normalized.append({
-            "Effect": s.get("Effect"),
-            "Action": action,
-            "Resource": resource
-        })
-
-    return normalized
-
-
-def normalize_policy_list(policies):
-    normalized = []
-
-    for p in policies:
-        normalized.append({
-            "PolicyName": p.get("policy_name"),
-            "PolicyArn": p.get("policy_arn"),
-            "Statement": normalize_statements(p.get("statement", []))
-        })
-
-    return normalized
-
-
-def normalize_iam_users(raw_payload, account_id, region="global"):
-    items = raw_payload
+def normalize_iam_users(raw_payload: Dict[str, Any], account_id: str, region="global") -> Dict[str, Any]:
+    users = raw_payload.get("users",[])
     nodes = []
 
-    for item in items:
-        user = item["user"]
-
-        user_id = user["UserId"]
-        user_name = user["UserName"]
+    for user_value in users:
+        name = user_value.get("UserName")
+        
+        node_type = "iam_user"
+        node_id = f"{account_id}:{node_type}:{name}"
+        resource_id = user_value.get("UserId")
+        arn = user_value.get("Arn")
+        create_date = user_value.get("CreateDate")
+        attached_policies = user_value.get("AttachedPolicies", [])
+        inline_policies = user_value.get("InlinePolicies", [])
+        group_policies = user_value.get("Groups", [])
 
         node = {
-            "node_type": "iam_user",
-            "node_id": f"iam_user:{account_id}:{user_name}",
-            "resource_id": user_id,
-            "name": user_name,
-            
+            "node_type": node_type,
+            "node_id": node_id,
+            "resource_id": resource_id,
+            "name": name,
+            "account_id": account_id,
+            "region": region,
             "attributes": {
-                "arn": user["Arn"],
-                "create_date": user["CreateDate"].isoformat(),
-                
-                "attached_policies": normalize_policy_list(
-                    item.get("attached_policies", [])
-                ),
-
-                "inline_policies": normalize_policy_list(
-                    item.get("inline_policies", [])
-                ),
-
-                "group_policies": normalize_policy_list(
-                    item.get("group_policies", [])
-                )
-            },
-
-            "raw_refs": {
-                "source": sorted(list(set(item.get("api_sources", [])))),
-                "collected_at": item.get("collected_at")
+                "arn": arn,
+                "create_date": create_date.isoformat(),
+                "attached_policies": attached_policies,
+                "inline_policies": inline_policies,
+                "group_policies": group_policies
             }
         }
 

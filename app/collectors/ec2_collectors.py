@@ -1,80 +1,41 @@
 from __future__ import annotations
-
-import botocore
 from typing import Any, Dict, List
-from datetime import datetime, timezone
+import base64
 
-
+#EC2 인스턴스 (user data 포함)
 def collect_ec2(session, region: str) -> Dict[str, Any]:
-		
-		# ec2 클라이언트 초기화 및 수집 시간 기록
-    client = session.client("ec2", region_name="us-east-1")
-    collected_at = datetime.now(timezone.utc).isoformat()
-		
-		# 데이터를 담을 구조
-    raw_instances: List[Dict[str, Any]] = []
-    raw_key_pairs: List[Dict[str, Any]] = []
-    raw_user_data: Dict[str, Any] = {}
+    #API 호출용 객체 생성
+    ec2 = session.client("ec2", region_name=region)
+    paginator = ec2.get_paginator("describe_instances")
+    
+    #인스턴스가 저장될 구조 (리스트 안에 딕셔너리가 존재하며, 딕셔너리의 str 키에 어떤 형태로든 값이 들어갈 수 있음)
+    instances: List[Dict[str, Any]] = []
 
-    # 1. describe_instances
-    try:
-        p = client.get_paginator("describe_instances")
-        for page in p.paginate():
-            for res in page.get("Reservations", []):
-                raw_instances.extend(res.get("Instances", []))
-    except botocore.exceptions.ClientError as e:
-        return _error_payload("ec2", region, "describe_instances", e)
+    #EC2 DescribeInstances API를 paginator로 반복 호출
+    for page in paginator.paginate(): #인스턴스가 많으면 페이지가 넘어가기 때문에 모든 페이지 불러오기
+        for reservation in page["Reservations"]: #내부적으로 묶여서 반환되는 Reservations 단위로 다시 불러와서
+            for instance in reservation["Instances"]: #Instances 배열 안에 인스턴스들을 가져옴
+                
+                instance_id = instance["InstanceId"] #각 인스턴스의 ID를 가져와서
+                
+                print(f"[+] Processing EC2 Instance: {instance_id}")
+                
+                #해당 인스턴스 ID의 인스턴스에서 속성값을 추가로 가져오도록 attribute 호출
+                base64_user_data = ec2.describe_instance_attribute(InstanceId=instance_id, Attribute="userData")
 
-    # 2. describe_key_pairs
-    try:
-        # p = client.get_paginator("describe_key_pairs")
-        # for page in p.paginate():
-        #     raw_key_pairs.extend(page.get("KeyPairs", []))
-        resp = client.describe_key_pairs()
-        key_pairs = resp.get("KeyPairs", [])
-    except botocore.exceptions.ClientError as e:
-        raw_key_pairs.append({"__error__": _err(e)})
+                #없으면 None로
+                user_data = None
+                #UserData라는 키가 존재하고 해당 키의 Value 값이 존재하면
+                if "UserData" in base64_user_data and "Value" in base64_user_data["UserData"]:
+                    #Value 값을 base64 디코딩하여 userdata 변수에 저장
+                    user_data = base64.b64decode(base64_user_data["UserData"]["Value"]).decode("utf-8")
 
-    # 3. UserData
-    for inst in raw_instances:
-        iid = inst.get("InstanceId")
-        print(f"[+] Processing EC2: {iid}")
-        if not iid:
-            continue
-        try:
-            attr = client.describe_instance_attribute(
-                InstanceId=iid, Attribute="userData"
-            )
-            raw_user_data[iid] = attr
-        except botocore.exceptions.ClientError as e:
-            raw_user_data[iid] = {"__error__": _err(e)}
-		
-		# 출력
+                instance["UserData"] = user_data #해당 instance 리스트에 UserData 값을 실제 값으로 추가
+
+                instances.append(instance) #위에 정의해둔 구조에 인스턴스 딕셔너리를 하나씩 넣음
+
     return {
-        "service": "ec2",
-        "region": region,
-        "collected_at": collected_at,
-        "raw": {
-            "describe_instances": raw_instances,
-            "describe_key_pairs": key_pairs,
-            "describe_instance_attribute_userData": raw_user_data,
-        },
+        "region": region, #리전
+        "count": len(instances), #인스턴스 개수
+        "instances": instances #인스턴스 리스트
     }
-
-
-def _error_payload(service: str, region: str, api: str, e: Exception) -> Dict[str, Any]:
-    return {
-        "service": service,
-        "region": region,
-        "error": {"api": api, "detail": _err(e)},
-    }
-
-
-def _err(e: Exception) -> Dict[str, Any]:
-    if hasattr(e, "response"):
-        r = getattr(e, "response", {}) or {}
-        return {
-            "Error": r.get("Error", {}),
-            "ResponseMetadata": r.get("ResponseMetadata", {}),
-        }
-    return {"Error": {"Message": str(e)}}
