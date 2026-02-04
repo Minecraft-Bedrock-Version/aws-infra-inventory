@@ -12,7 +12,10 @@ EXCLUDED_ROLES = {
     "mbvEC2Role",
     "mbvLambdaGraphRole",
     "mbvLambdaRole",
-    "mbvLambdaSlackRole"
+    "mbvLambdaSlackRole",
+    "AWSServiceRoleForECS",
+    "AWSServiceRoleForAPIGateway",
+    "AWSServiceRoleForAmazonElasticFileSystem"
 }
 
 #IAM Role과 각 Role에 연결된 인라인, 관리형 정책 + 어떤 주체가 해당 Role을 Assume 할 수 있는지
@@ -92,3 +95,4 @@ def collect_iam_role(session) -> Dict[str, Any]:
         "count": len(roles), #역할 수
         "roles": roles #역할 리스트
     }
+
