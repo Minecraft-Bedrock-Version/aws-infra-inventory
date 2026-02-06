@@ -1,32 +1,27 @@
-# from cli_node.CliToNode import cli_put_user_policy_to_iam_user_json
+"""
+AWS CLI Normalization Handler
 
-# def run_cli_collector(cli_input: str, account_id: str) -> dict:
-
-#     if not cli_input or cli_input.strip() == "":
-#         return {"nodes": [], "edges": []}
-    
-#     try:
-        
-#         cli_node_result = cli_put_user_policy_to_iam_user_json(
-#             cli_text=cli_input,
-#             account_id=account_id
-#         )
-#         return cli_node_result
-        
-#     except Exception as e:
-#         print(f"CLI 변환 중 오류 발생: {e}")
-#         return {"nodes": [], "edges": []}
+다양한 AWS 서비스(IAM, EC2 등)의 CLI 명령어를 파싱하여 
+시각화에 필요한 노드 및 에지 데이터로 정규화하는 메인 핸들러입니다.
+"""
     
 from cli_node.comparator import compare_with_existing
-from cli_node.iam_cli import iam_handler            
+from cli_node import iam_cli
+from cli_node import ec2_cli
 import shlex
 
 
 class AWSNormalizationHandler:
     def __init__(self):
-        self.handlers = { #서비스 분류
-            'iam': iam_handler.parse_iam
+        # 서비스별 파서(Parser) 등록
+        # 각 서비스 모듈의 parse 함수는 CLI 명령어를 파싱하여
+        # action (생성, 업데이트 등), identifier (리소스 고유 식별자),
+        # 그리고 params (추가 메타데이터)를 반환합니다.
+        self.handlers = {
+            'iam': iam_cli.parse_iam, # IAM 서비스 CLI 파서
+            'ec2': ec2_cli.parse_ec2  # EC2 서비스 CLI 파서
         }
+
 
     def process(self, cli_input, existing_nodes):
         service, parts = classify_service(cli_input) #CLI에서 서비스 추출 및 JSON 추출
@@ -66,11 +61,3 @@ def classify_service(cli_input):
         return parts[1], parts
     except ValueError:
         return None, None
-
-# 테스트 실행
-if __name__ == "__main__":
-    handler = AWSNormalizationHandler()
-    mock_db = [{"id": "n_1", "service": "iam", "identifier": "admin-user"}]
-
-    print(handler.process("aws iam create-user --user-name new-user", mock_db))
-    print(handler.process("aws iam update-user --user-name admin-user", mock_db))
