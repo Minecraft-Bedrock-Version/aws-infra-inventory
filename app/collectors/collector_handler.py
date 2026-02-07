@@ -8,6 +8,7 @@ from collectors.iam_role_collectors import collect_iam_role
 from collectors.sqs_collectors import collect_sqs
 from collectors.rds_collectors import collect_rds
 from collectors.network_collectors import collect_network
+from collectors.secretsmanager_collectors import collect_secretsmanager
 
 def handler(event, session):
     #event(payload)에서 계정 id, region을 받아옴
@@ -41,5 +42,6 @@ def handler(event, session):
     result["subnet"] = network["subnet"]
     result["igw"] = network["igw"]
     result["route_table"] = network["route_table"]
+    result["secretsmanager"] = collect_secretsmanager(session, region)
 
     return result

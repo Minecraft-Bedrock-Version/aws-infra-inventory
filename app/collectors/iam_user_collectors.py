@@ -127,8 +127,22 @@ def collect_iam_user(session) -> Dict[str, Any]:
                     group["AttachedPolicies"] = group_attached
                     group["InlinePolicies"] = group_inline
                     groups.append(group) 
+
+            #--- (수정) 추가 수집 ---
+
+            #User 태그 목록 수집
+            user_tag = iam.list_user_tags(UserName=username)
+
+            #MFA 기기 상태 수집
+            mfa_device = iam.list_mfa_devices(UserName=username)
+
+            #Access Key 목록 수집
+            access_key = iam.list_access_keys(UserName=username)
                     
-            #최종적으로 User 하나의 관리형, 인라인 정책과 Group 정보(그룹의 정책들도 포함하여) 저장
+            #수집된 모든 데이터를 User 객체에 통합 저장
+            user["Tags"] = user_tag.get("Tags", [])
+            user["MFADevices"] = mfa_device.get("MFADevices", [])
+            user["AccessKeys"] = access_key.get("AccessKeyMetadata", [])
             user["AttachedPolicies"] = attached_policies
             user["InlinePolicies"] = inline_policies
             user["Groups"] = groups

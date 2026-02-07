@@ -5,7 +5,7 @@ import re
 SQS_PATTERN = r"(https://sqs\.[a-z0-9-]+\.amazonaws\.com/[^\s'\"]+)"
 RDS_PATTERN = r"[^\s'\"/]+\.([a-z0-9-]+)\.rds\.amazonaws\.com"
 
-def graph_ec2(raw_payload: Dict[str, Any], account_id: str, region: str, node=None) -> Dict[str, Any]:
+def graph_ec2(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dict[str, Any]:
     
     instances = raw_payload.get("ec2", {}).get("instances", [])
     #Edge 생성

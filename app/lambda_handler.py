@@ -28,7 +28,7 @@ def lambda_handler(event, context):
     
     #Node 정규화
     normalized_data = run_normalizers(raw_data)
-    
+
     #CLI 노드 생성
     cli_graph = run_cli_collector(cli_input, account_id)
     
@@ -48,11 +48,11 @@ def lambda_handler(event, context):
     
     filtering_data = run_filtering(graph_data, start_node_id) #start node를 기준으로 직접, 간접 연결된 node, edge만 추출
     
-    return filtering_data 
+    return filtering_data
 
 if __name__ == "__main__": #테스트용 실행 코드
     test_event = {
-        "cli_input": "aws iam put-user-policy --user-name scp_test --policy-name cg-sqs-scenario-assumed-role --policy-document '{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\",\"Action\": [\"iam:Get*\",\"iam:List*\"],\"Resource\": \"*\"},{\"Effect\": \"Allow\",\"Action\": [\"sts:AssumeRole\"],\"Resource\": \"*\"}]}'",
+        "cli_input": "aws iam put-user-policy --user-name manager_cgiddd7ga7gjim --policy-name cg-rotation-scenario --policy-document '{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\",\"Action\": [\"iam:CreateAccessKey\",\"iam:DeleteAccessKey\"],\"Resource\": \"*\"}]}'",
         "account_id": "288528695623",
         "region": "us-east-1"
     }

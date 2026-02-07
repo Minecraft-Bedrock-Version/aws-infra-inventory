@@ -13,6 +13,7 @@ from filters.route_table import extract_route_table_for_vector
 from filters.sqs import extract_sqs_for_vector
 from filters.subnet import extract_subnet_for_vector
 from filters.vpc import extract_vpc_for_vector
+from filters.secretsmanager import extract_secretsmanager_for_vector
 
 def run_filtering(full_graph: dict, start_node_id: str) -> dict:
     #전체 node, edge를 가져와서 각각 nodes, edges에 넣어두고
@@ -24,7 +25,7 @@ def run_filtering(full_graph: dict, start_node_id: str) -> dict:
     
     #시작 node를 기준으로 간접, 직접 연결된 node와 edge들 추출
     subgraph = extract_connected_subgraph(graph_nodes=nodes, graph_edges=edges, start_node_id=start_node_id)
-    
+
     refine_map = { #node의 type에 따라 필드를 정제하기 위한 매핑 리스트 생성해두고,
         "ec2_instance": extract_ec2_for_vector,
         "rds_instance": extract_rds_for_vector,
@@ -35,7 +36,8 @@ def run_filtering(full_graph: dict, start_node_id: str) -> dict:
         "route_table": extract_route_table_for_vector,
         "sqs": extract_sqs_for_vector,
         "subnet": extract_subnet_for_vector,
-        "vpc": extract_vpc_for_vector
+        "vpc": extract_vpc_for_vector,
+        "secretsmanager": extract_secretsmanager_for_vector
     }
     
     final_nodes = []

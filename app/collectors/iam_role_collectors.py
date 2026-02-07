@@ -77,6 +77,11 @@ def collect_iam_role(session) -> Dict[str, Any]:
                         "PolicyName": policy_name, #정책 이름
                         "PolicyDocument": policy_detail["PolicyDocument"] #정책 내용 
                     })
+
+            #--- (수정) 추가 수집 ---
+            
+            # Role 태그 목록 수집
+            tag = iam.list_role_tags(RoleName=role_name)
                     
             #어떤 주체가 Assume할 수 있는지 GET으로 확인
             trust_policy = None
@@ -84,10 +89,11 @@ def collect_iam_role(session) -> Dict[str, Any]:
             if "AssumeRolePolicyDocument" in role_detail["Role"]: #AssumeRolePolicyDocument가 존재하면
                 trust_policy = role_detail["Role"]["AssumeRolePolicyDocument"] #trust_policy에 추가
 
-            #최종적으로 Role 하나의 관리형, 인라인 정책과 Assume 대상 정보 저장
+            #최종적으로 Role 하나의 관리형, 인라인 정책과 Assume 대상, 태그 정보 저장
             role["AttachedPolicies"] = attached_policies
             role["InlinePolicies"] = inline_policies
             role["AssumeRolePolicyDocument"] = trust_policy
+            role["Tags"] = tag.get("Tags", [])
 
             roles.append(role)
 
@@ -95,4 +101,3 @@ def collect_iam_role(session) -> Dict[str, Any]:
         "count": len(roles), #역할 수
         "roles": roles #역할 리스트
     }
-
