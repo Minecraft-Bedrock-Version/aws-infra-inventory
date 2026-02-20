@@ -72,12 +72,3 @@ def normalize_ecs(raw_payload: Dict[str, Any], account_id: str, region: str) -> 
         nodes.append(node)
 
     return nodes
-
-def _iso(dt_obj: Any) -> str | None:
-    if dt_obj is None: return None
-    try:
-        if isinstance(dt_obj, str):
-            return dt_obj.replace(" ", "T").split(".")[0].replace("+09:00", "Z") # 단순화 처리
-        return dt_obj.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-    except Exception:
-        return str(dt_obj)
