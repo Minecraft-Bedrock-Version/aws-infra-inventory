@@ -11,6 +11,9 @@ from normalizers.subnet_normalizer import normalize_subnets
 from normalizers.igw_normalizer import normalize_igws
 from normalizers.route_table_normalizer import normalize_route_tables
 from normalizers.secretsmanager_normalizer import normalize_secretsmanager
+from normalizers.ecs_normalizer import normalize_ecs
+from normalizers.sg_normalizer import normalize_security_groups 
+from normalizers.eventbridge_normalizer import normalize_eventbridge_rules
 
 def run_normalizers(collected: Dict[str, Any]) -> Dict[str, Any]:
     account_id = collected["account_id"]
@@ -22,7 +25,6 @@ def run_normalizers(collected: Dict[str, Any]) -> Dict[str, Any]:
         "account_id": account_id,
         "region": region,
         "collected_at": collected_at,
-        
         "nodes": (
             normalize_ec2(collected.get("ec2", []), account_id, region) +
             normalize_lambda(collected.get("lambda", []), account_id, region) +
@@ -34,8 +36,12 @@ def run_normalizers(collected: Dict[str, Any]) -> Dict[str, Any]:
             normalize_subnets(collected.get("subnet", []), account_id, region) +
             normalize_igws(collected.get("igw", []), account_id, region) +
             normalize_route_tables(collected.get("route_table", []), account_id, region) +
-            normalize_secretsmanager(collected.get("secretsmanager", []), account_id, region)
+            normalize_security_groups(collected.get("security_group", {}), account_id, region) +
+            normalize_secretsmanager(collected.get("secretsmanager", {}), account_id) +
+            normalize_ecs(collected.get("ecs", {}), account_id, region) + 
+            normalize_eventbridge_rules(collected, account_id, region)
         )
+        
     }
 
     return normalized_map
