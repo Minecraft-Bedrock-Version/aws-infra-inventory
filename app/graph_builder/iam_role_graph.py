@@ -34,49 +34,73 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
     rds_nodes = raw_payload.get("rds", {}).get("instances", [])
     lambda_nodes = raw_payload.get("lambda", {}).get("functions", [])
     secrets_nodes = raw_payload.get("secretsmanager", {}).get("secrets", [])
+    ecs_nodes = raw_payload.get("ecs", {}).get("tasks", [])
+    s3_nodes = raw_payload.get("s3", {}).get("buckets", [])
 
+    # (1) Role 사용 가능한 서비스와의 관계 정의 (ASSUME_ROLE)
     for role_value in roles: #User 목록 순회
         node_type = "iam_role"
         name = role_value.get("RoleName")
         node_id = f"{account_id}:{node_type}:{name}"
         
         assume_doc = role_value.get("AssumeRolePolicyDocument", {}) #Assume 대상 문서
+
         for stmt in assume_doc.get("Statement", []): #Statement 순회하며
             if stmt.get("Effect") != "Allow": #거부라면 종료
                 continue
+
             principal = stmt.get("Principal", {}) #대상 조건 불러와서
+
             service_principal = principal.get("Service") #서비스 필드 불러오기
             if service_principal: #서비스 필드가 존재하면
                 if isinstance(service_principal, str):
                     service_principal = [service_principal]
+
                 for sp in service_principal: #순회하며
                     svc = sp.split(".")[0] #url 형식 중에서 서비스만 가져옴
-                    if svc == "lambda": #해당 서비스가 Lambda라면
+
+                    # (1-1) 람다
+                    if svc == "lambda":
                         for func in lambda_nodes: #모든 람다 노드를 순회하여 연결
                             fname = func["FunctionName"]
                             src = f"{account_id}:{region}:lambda:{fname}"
                             dst = node_id
                             edge_id = f"edge:{fname}:ASSUME_ROLE:{name}"
                             _add_edge(edge_id, "ASSUME_ROLE", src, dst, "A role that a Lambda function can assume.")
-                    if svc == "ec2": #해당 서비스가 ec2라면
+
+                    # (1-2) EC2
+                    if svc == "ec2":
                         for inst in ec2_nodes: #모든 ec2 노드를 순회하여 연결
                             iid = inst["InstanceId"]
                             src = f"{account_id}:{region}:ec2:{iid}"
                             dst = node_id
                             edge_id = f"edge:{iid}:ASSUME_ROLE:{name}"
                             _add_edge(edge_id, "ASSUME_ROLE", src, dst, "A role that a EC2 Instance can assume.")
-                    if svc == "rds": #해당 서비스가 rds라면
+                    
+                    # (1-3) RDS
+                    if svc == "rds":
                         for inst in rds_nodes: #모든 rds 노드를 순회하여 연결
                             iid = inst["DBInstanceIdentifier"]
                             src = f"{account_id}:{region}:rds:{iid}"
                             dst = node_id
                             edge_id = f"edge:{iid}:ASSUME_ROLE:{name}"
                             _add_edge(edge_id, "ASSUME_ROLE", src, dst, "A role that a RDS Instance can assume.")
+                    
+                    # (1-4) ECS
+                    if svc == "ecs":
+                        for task in ecs_nodes: #모든 ecs 노드를 순회하여 연결
+                            tid = task.get("TaskName")
+                            src = f"{account_id}:{region}:ecs_task:{tid}"
+                            dst = node_id
+                            edge_id = f"edge:{tid}:ASSUME_ROLE:{name}"
+                            _add_edge(edge_id, "ASSUME_ROLE", src, dst, "This ECS Task is authorized to assume this IAM Role.")
                                 
+            # (2) 
             aws_principal = principal.get("AWS") #AWS 필드 불러오기
             if aws_principal: #AWS 필드가 존재하면
                 if isinstance(aws_principal, str):
                     aws_principal = [aws_principal]
+                
                 for ap in aws_principal: #순회하며
                     if ":user/" in ap: #대상이 User 라면
                         user_name = ap.split("/")[-1] #User 이름을 가져와서 edge 생성
@@ -84,18 +108,43 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                         dst = node_id
                         edge_id = f"edge:{user_name}:ASSUME_ROLE:{name}"
                         _add_edge(edge_id, "ASSUME_ROLE", src, dst, "This is a role that an IAM User can assume.")
+                    
                     if ":role/" in ap: #대상이 역할이라면
                         role_name = ap.split("/")[-1] #역할 이름을 가져와서 edge 생성
                         src = f"{account_id}:iam_role:{role_name}"
                         dst = node_id
                         edge_id = f"edge:{role_name}:ASSUME_ROLE:{name}"
                         _add_edge(edge_id, "ASSUME_ROLE", src, dst, "This is a role that an IAM Role can assume.")
-                            
+                    
+                    if ":user/" in ap:
+                        user_name = ap.split("/")[-1]
+                        # 사용자가 이 Role로 '변신'할 수 있다는 관계 (공격 경로의 핵심)
+                        src = f"{account_id}:iam_user:{user_name}"
+                        dst = node_id
+                        _add_edge(f"edge:{user_name}:CAN_ASSUME:{name}", "STS_ASSUME_ROLE", src, dst, f"User {user_name} is trusted to assume this role.")
+
+
+    # ---------------------------------------2. 정책 권한 분석 -------------------------------------------------------
+    # - Role에 연결된 정책(Attached/Inline Policies)을 분석하여 이 역할이 접근할 수 있는 리소스와의 관계를 정의
+
+
         policies = [] #해당 리스트에
         policies.extend(role_value.get("AttachedPolicies", [])) #관리형 정책과
         policies.extend(role_value.get("InlinePolicies", [])) #인라인 정책 추가
         
         for policy in policies: #정책들 순회
+
+            p_name = policy.get("PolicyName", "UnknownPolicy")
+            p_edge_id = f"edge:{name}:HAS_POLICY:{p_name}"
+            p_dst = f"{account_id}:iam_policy:{p_name}"
+            _add_edge(
+                p_edge_id, 
+                "POLICY_ATTACHED_TO_ROLE", 
+                node_id,   # Source: IAM Role
+                p_dst,     # Destination: IAM Policy
+                f"The IAM Policy '{p_name}' is attached to this role."
+            )
+
             if "Versions" in policy: #관리형 정책의 경우 Version의 DefaultVersion 가져오기
                 docs = [v["Document"] for v in policy.get("Versions", []) if v.get("IsDefaultVersion")]
             elif "PolicyDocument" in policy: #인라인 정책의 경우 정책 내용 가져오기
@@ -107,12 +156,16 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                 for stmt in doc.get("Statement", []): #버전 제외 정책의 권한 목록 조회
                     if stmt.get("Effect") != "Allow": #허용 정책이 아니라 거부 정책이면 제외
                         continue
+                    
                     actions = stmt.get("Action", []) #action과 
                     resources = stmt.get("Resource", []) #resource 조회
+
                     if isinstance(actions, str):
                         actions = [actions]
+
                     if isinstance(resources, str):
                         resources = [resources]
+
                     # NOTE: Action 단위로 service를 결정하고, 그 Action에 대응하는 Resource 기준으로 edge를 생성해야 함
                     # - Action이 여러 개인 Statement에서 Resource 처리 로직이 바깥으로 빠지면 누락/오연결이 발생할 수 있음
                     # - 그래서 Resource 처리(if "*" in resources / else)는 반드시 이 Action 루프 내부에서 실행됨
@@ -188,6 +241,74 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                         dst = f"{account_id}:{region}:lambda:{fname}"
                                         edge_id = f"edge:{name}:IAM_ROLE_CAN_MODIFY_LAMBDA:{fname}"
                                         _add_edge(edge_id, "IAM_ROLE_CAN_MODIFY_LAMBDA", node_id, dst, "This role can modify Lambda code/configuration.")
+                        
+
+                        # ECS_takeover-oriented relations (ecs_takeover 사나리오 분석용 추가 관계)
+                        #   1) ecs:UpdateContainerInstancesState -> ECS 클러스터에 속한 특정 서버의 상태를 ACTIVE 또는 DRAINING으로 변경하는 권한 (IAM_ROLE_CAN_DRAIN_ECS)
+                        #   2) ecs:List*/Describe* -> ECS 자원의 목록을 조회하고 상세 정보를 확인하는 권한 (IAM_ROLE_CAN_RECON_ECS)
+
+                        if service == "ecs":
+                            # (1) ecs:UpdateContainerInstancesState 
+                            # - Resource가 "*" 이면: 현재 Role을 제외한 모든 Role을 대상으로 연결
+                            # - Resource가 특정 Cluster ID/Name 이면: 해당 함수만 대상으로 연결
+                            if action == "ecs:UpdateContainerInstancesState": #노드 상태 변경 권한 (Draining 등)
+                                if "*" in resources:
+                                    for cluster in ecs_nodes: 
+                                        cname = cluster.get("TaskName")
+                                        dst = f"{account_id}:{region}:ecs_cluster:{cname}"
+                                        edge_id = f"edge:{name}:IAM_ROLE_CAN_DRAIN_ECS:{cname}"
+                                        _add_edge(edge_id, "IAM_ROLE_CAN_DRAIN_ECS", node_id, dst, "This role can drain ECS host instances, forcing tasks to reschedule.")
+                                else:
+                                    for res in resources:
+                                        if ":cluster/" in res:
+                                            cname = res.split("/")[-1]
+                                            dst = f"{account_id}:{region}:ecs_cluster:{cname}"
+                                            edge_id = f"edge:{name}:IAM_ROLE_CAN_DRAIN_ECS:{cname}"
+                                            _add_edge(edge_id, "IAM_ROLE_CAN_DRAIN_ECS", node_id, dst, "This role can drain ECS host instances on a specific cluster.")
+                            
+                            # (2) ecs:List*/Describe*
+                            # - Resource가 "*" 이면: 현재 Role을 제외한 모든 Role을 대상으로 연결
+                            # - Resource가 클러스터 ARN 혹은 태스크 관련 ARN 이면: 해당 함수만 대상으로 연결
+                            if action in ["ecs:ListTasks", "ecs:DescribeTasks", "ecs:ListClusters"]:
+                                if "*" in resources:
+                                    for cluster in ecs_nodes:
+                                        cname = cluster.get("TaskName")
+                                        dst = f"{account_id}:{region}:ecs_cluster:{cname}"
+                                        edge_id = f"edge:{name}:IAM_ROLE_CAN_RECON_ECS:{cname}"
+                                        _add_edge(edge_id, "IAM_ROLE_CAN_RECON_ECS", node_id, dst, "This role can enumerate ECS tasks and clusters to locate targets.")
+                                else:
+                                    for res in resources:
+                                        # 리소스가 클러스터 ARN 혹은 태스크 관련 ARN일 경우
+                                        target_name = res.split("/")[-1]
+                                        dst = f"{account_id}:{region}:ecs_resource:{target_name}"
+                                        edge_id = f"edge:{name}:IAM_ROLE_CAN_RECON_ECS:{target_name}"
+                                        _add_edge(edge_id, "IAM_ROLE_CAN_RECON_ECS", node_id, dst, "This role can perform reconnaissance on specific ECS resources.")
+
+                        #다른 사용자의 권한을 직접 수정할 수 있는 경우
+                        if service == "iam" and action in [
+                            "iam:AttachUserPolicy", 
+                            "iam:PutUserPolicy", 
+                            "iam:AddUserToGroup"
+                        ]:
+                            if "*" in resources: #모든 유저를 대상으로 권한 수정이 가능한 경우
+                                for user in iam_users: #모든 유저를 대상으로 순회하면서
+                                    user_name = user["UserName"]
+                                    dst = f"{account_id}:iam_user:{user_name}"
+                                    edge_id = f"edge:{name}:ELEVATES_PRIVILEGE:{user_name}"
+                                    _add_edge(edge_id, "ELEVATES_PRIVILEGE", node_id, dst, 
+                                            f"This role can elevate privileges of user {user_name} via {action}.")
+                            else: # 특정 유저 ARN이 지정된 경우
+                                for res in resources: #리소스가 유저인 경우
+                                    if ":user/" in res:
+                                        user_name = res.split("/")[-1] #유저 이름만 추출
+                                        dst = f"{account_id}:iam_user:{user_name}"
+                                        edge_id = f"edge:{name}:ELEVATES_PRIVILEGE:{user_name}"
+                                        _add_edge(edge_id, "ELEVATES_PRIVILEGE", node_id, dst, 
+                                                f"This role can elevate privileges of specific user {user_name} via {action}.")
+
+    # ---------------------------------------3. 리소스 접근 권한 -------------------------------------------------------
+    # - Wildcard (*): 정책의 Resource가 *이면, 미리 로드해둔 해당 서비스의 모든 노드와 연결
+
 
                         # Resource 처리 로직 (기존 접근 권한 연결)
                         # - IAM_ROLE_ACCESS_* 관계는 "이 Role이 해당 서비스 리소스에 접근 가능한가"를 넓게 표현
@@ -200,6 +321,7 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     dst = f"{account_id}:{region}:sqs:{qname}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_SQS:{qname}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_SQS", node_id, dst, "This role gives you access to SQS.")
+                            
                             # EC2 모든 노드와 연결
                             if service == "ec2":
                                 for inst in ec2_nodes:
@@ -207,6 +329,7 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     dst = f"{account_id}:{region}:ec2:{iid}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_EC2:{iid}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_EC2", node_id, dst, "This role gives you access to EC2.")
+                            
                             # IAM 모든 노드 연결
                             if service == "iam":
                                 # 모든 user와 연결
@@ -223,6 +346,7 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     dst = f"{account_id}:iam_role:{role_name}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_IAM:{role_name}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_IAM", node_id, dst, "This role gives you access to IAM.")
+                            
                             # RDS 모든 노드와 연결
                             if service == "rds":
                                 for inst in rds_nodes:
@@ -230,6 +354,7 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     dst = f"{account_id}:{region}:rds:{iid}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_RDS:{iid}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_RDS", node_id, dst, "This role gives you access to RDS.")
+                            
                             # Lambda 모든 노드와 연결
                             if service == "lambda":
                                 for func in lambda_nodes:
@@ -237,6 +362,7 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     dst = f"{account_id}:{region}:lambda:{fname}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_LAMBDA:{fname}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_LAMBDA", node_id, dst, "This role gives you access to Lambda.")
+                            
                             # Secrets Manager 모든 노드와 연결
                             if service == "secretsmanager":
                                 for sec in secrets_nodes:
@@ -246,30 +372,35 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_SECRETSMANAGER", node_id, dst, "This role gives you access to Secrets Manager.")
                         else:
                             for res in resources:
+                                
                                 # 특정 user 대상인 경우 해당 user와 연결
                                 if service == "iam" and ":user/" in res:
                                     user_name = res.split("/")[-1]
                                     dst = f"{account_id}:iam_user:{user_name}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_USER:{user_name}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_USER", node_id, dst, "This role gives you access to IAM User.")
+                                
                                 # 특정 role 대상인 경우 해당 role과 연결
                                 if service == "iam" and ":role/" in res:
                                     role_name = res.split("/")[-1]
                                     dst = f"{account_id}:iam_role:{role_name}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_ROLE:{role_name}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_ROLE", node_id, dst, "This role gives you access to IAM Role.")
+                                
                                 # 특정 sqs 대상인 경우 해당 sqs와 연결
                                 if service == "sqs" and ":sqs:" in res:
                                     qname = res.split(":")[-1]
                                     dst = f"{account_id}:{region}:sqs:{qname}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_SQS:{qname}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_SQS", node_id, dst, "This role gives you access to SQS Queue.")
+                                
                                 # 특정 ec2 인스턴스 대상인 경우 해당 ec2 인스턴스와 연결
                                 if service == "ec2" and ":ec2:" in res and ":instance/" in res:
                                     iid = res.split("/")[-1]
                                     dst = f"{account_id}:{region}:ec2:{iid}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_EC2:{iid}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_EC2", node_id, dst, "This role gives you access to EC2 Instance.")
+                                
                                 # 특정 rds 인스턴스 대상인 경우 해당 rds 인스턴스와 연결
                                 if service == "rds" and ":rds:" in res and ":db/" in res:
                                     db_name = res.split("/")[-1]
@@ -280,16 +411,41 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                                             dst = f"{account_id}:{region}:rds:{rds_id}"
                                             edge_id = f"edge:{name}:IAM_ROLE_ACCESS_RDS:{rds_id}"
                                             _add_edge(edge_id, "IAM_ROLE_ACCESS_RDS", node_id, dst, "This role gives you access to RDS Instance.")
+                                
                                 # 특정 Lambda 함수 대상인 경우 해당 Lambda 함수와 연결
                                 if service == "lambda" and ":lambda:" in res and ":function/" in res:
                                     fname = res.split("/")[-1]
                                     dst = f"{account_id}:{region}:lambda:{fname}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_LAMBDA:{fname}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_LAMBDA", node_id, dst, "This role gives you access to Lambda Function.")
+                                
                                 #특정 Secrets 대상인 경우 해당 Secrets과 연결
                                 if service == "secretsmanager" and ":secretsmanager:" in res and ":secretsmanager/" in res:
                                     secret_name = res.split("/")[-1]
                                     dst = f"{account_id}:{region}:secretsmanager:{secret_name}"
                                     edge_id = f"edge:{name}:IAM_ROLE_ACCESS_SECRETSMANAGER:{secret_name}"
                                     _add_edge(edge_id, "IAM_ROLE_ACCESS_SECRETSMANAGER", node_id, dst, "This role gives you access to Secrets.")
+
+                                if service == "s3":
+                                    if "*" in resources:
+                                        for bucket in s3_nodes:
+                                            bname = bucket["Name"]
+                                            dst = f"{account_id}:s3:{bname}"
+                                            _add_edge(f"edge:{name}:ACCESS_S3:{bname}", "IAM_ROLE_ACCESS_S3", node_id, dst, "Role has access to all S3 buckets.")
+                                    else:
+                                        for res in resources:
+                                            if "arn:aws:s3:::" in res:
+                                                bname = res.split(":::")[-1].split("/")[0] # 버킷 이름만 추출
+                                                dst = f"{account_id}:s3:{bname}"
+                                                _add_edge(f"edge:{name}:ACCESS_S3:{bname}", "IAM_ROLE_ACCESS_S3", node_id, dst, "Role has access to a specific S3 bucket.")
+
+        # (5) EC2 InstanceProfile
+        for inst in ec2_nodes:
+            if name in inst.get("BoundRoleNames", []):
+                src = node_id
+                dst = f"{account_id}:{region}:ec2:{inst['InstanceId']}"
+                edge_id = f"edge:{name}:INSTANCE_PROFILE:{inst['InstanceId']}"
+                _add_edge(edge_id, "IAM_ROLE_HAS_INSTANCE_PROFILE", src, dst, "This role is explicitly assigned to the EC2 instance.")
+
+   
     return edges
