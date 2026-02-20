@@ -16,6 +16,29 @@ def collect_lambda(session, region: str) -> Dict[str, Any]:
         for function in page["Functions"]: #Functions 배열 안에 함수들을 가져옴
             function_name = function["FunctionName"]
             print(f"[+] Processing Lambda Function: {function_name}")
+
+            function["ExecutionRole"] = function.get("Role") 
+
+            #소스 코드 메타데이터 수집
+            try:
+                #메타데이터(코드 위치, 환경 변수 등) 요청
+                detail = lambda_client.get_function(FunctionName=function_name)
+                config = detail.get("Configuration", {}) #환경 설정 정보
+                code_info = detail.get("Code", {}) #코드 저장소 정보
+                env_vars = config.get("Environment", {}).get("Variables", {}) #환경변수
+            
+                #소스 코드 메타데이터
+                function["CodeMetadata"] = {
+                    "SourceUrl": code_info.get("Location"), #S3 URL (ZIP 방식일 때)
+                    "ImageUri": code_info.get("ImageUri"), #ECR URI (컨테이너 방식일 때)
+                    "Handler": config.get("Handler"), #코드 내 실행 시작 함수명
+                    "Runtime": config.get("Runtime"), #사용 언어
+                    "LastModified": config.get("LastModified") #마지막 수정일
+                    "EnvironmentVariables": env_vars 
+                }
+            except botocore.exceptions.ClientError as e:
+                print(f"[-] Error fetching Detail for {function_name}: {e}")
+                function["CodeMetadata"] = None
                 
             #함수의 리소스 기반 정책 가져오기
             try:
