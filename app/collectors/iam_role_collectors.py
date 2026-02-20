@@ -77,8 +77,6 @@ def collect_iam_role(session) -> Dict[str, Any]:
                         "PolicyName": policy_name, #정책 이름
                         "PolicyDocument": policy_detail["PolicyDocument"] #정책 내용 
                     })
-
-            #--- (수정) 추가 수집 ---
             
             # Role 태그 목록 수집
             tag = iam.list_role_tags(RoleName=role_name)
