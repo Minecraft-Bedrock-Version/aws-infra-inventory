@@ -9,6 +9,8 @@ from collectors.sqs_collectors import collect_sqs
 from collectors.rds_collectors import collect_rds
 from collectors.network_collectors import collect_network
 from collectors.secretsmanager_collectors import collect_secretsmanager
+from collectors.ecs_collectors import collect_ecs
+from collectors.eventbridge_collectors import collect_eventbridge
 
 def handler(event, session):
     #event(payload)에서 계정 id, region을 받아옴
@@ -42,6 +44,9 @@ def handler(event, session):
     result["subnet"] = network["subnet"]
     result["igw"] = network["igw"]
     result["route_table"] = network["route_table"]
+    result["security_group"] = network["security_group"] #(수정) Security group 추가
     result["secretsmanager"] = collect_secretsmanager(session, region)
+    result["ecs"] = collect_ecs(session, region)
+    result["eventbridge"] = collect_eventbridge(session, region)
 
     return result
