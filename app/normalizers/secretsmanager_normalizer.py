@@ -14,7 +14,7 @@ def normalize_secretsmanager(raw_payload: Dict[str, Any], account_id: str, regio
         arn = secret_value.get("ARN")
         create_date = secret_value.get("CreatedDate")
         description = secret_value.get("Description", "")
-        resource_policy = secret_value.get("ResourcePolicy")
+        resource_based_policy = secret_value.get("ResourcePolicy")
         versions_to_stages = secret_value.get("SecretVersionsToStages", {})
         tags = secret_value.get("Tags", [])
 
@@ -23,13 +23,13 @@ def normalize_secretsmanager(raw_payload: Dict[str, Any], account_id: str, regio
             "node_id": node_id,
             "resource_id": name,
             "name": name,
-            "account_id": account_id,
+            "account_id": accound,
             "region": region,
             "attributes": {
                 "arn": arn,
                 "create_date": create_date.isoformat() if hasattr(create_date, 'isoformat') else create_date,
                 "description": description,
-                "resource_policy": resource_policy,
+                "resource_based_policy": resource_based_policy,
                 "versions_to_stages": versions_to_stages,
                 "tags": tags
             }
