@@ -110,7 +110,7 @@ def collect_iam_user(session) -> Dict[str, Any]:
                             #버전 목록(각 버전의 id와 default 여부, 정책 내용)을 저장
                             policy["Versions"] = versions
                             policy["DefaultVersionId"] = default_version_id #default 버전을 따로 명시
-                            attached_policies.append(policy)
+                            group_attached.append(policy) #(수정) 그룹 객체에 들어가도록 수정
 
                     #그룹 - 인라인 정책
                     group_inline: List[str] = [] #저장될 구조
@@ -127,8 +127,6 @@ def collect_iam_user(session) -> Dict[str, Any]:
                     group["AttachedPolicies"] = group_attached
                     group["InlinePolicies"] = group_inline
                     groups.append(group) 
-
-            #--- (수정) 추가 수집 ---
 
             #User 태그 목록 수집
             user_tag = iam.list_user_tags(UserName=username)
