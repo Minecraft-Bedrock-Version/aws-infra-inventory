@@ -69,9 +69,3 @@ def normalize_ec2(raw_payload: Dict[str, Any], account_id: str, region: str) -> 
         nodes.append(node)
     
     return nodes
-
-def _iso(dt_obj: Any) -> str | None: #json 처리를 위한 str 변환 및 시간 표준화
-    if dt_obj is None: return None
-    try:
-        return dt_obj.astimezone(timezone.utc).isoformat().replace("+00:00", "Z")
-    except Exception: return str(dt_obj)
