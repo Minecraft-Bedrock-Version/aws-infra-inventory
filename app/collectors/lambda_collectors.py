@@ -33,7 +33,7 @@ def collect_lambda(session, region: str) -> Dict[str, Any]:
                     "ImageUri": code_info.get("ImageUri"), #ECR URI (컨테이너 방식일 때)
                     "Handler": config.get("Handler"), #코드 내 실행 시작 함수명
                     "Runtime": config.get("Runtime"), #사용 언어
-                    "LastModified": config.get("LastModified") #마지막 수정일
+                    "LastModified": config.get("LastModified"), #마지막 수정일
                     "EnvironmentVariables": env_vars 
                 }
             except botocore.exceptions.ClientError as e:

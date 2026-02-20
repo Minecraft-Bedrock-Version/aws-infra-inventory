@@ -89,16 +89,16 @@ def graph_lambda(raw_payload: Dict[str, Any], account_id: str, region: str, node
                                 elif "user/" in res:
                                     target_user = res.split("/")[-1] # 특정 유저가 대상인 경우 이름 추출
                                 if target_user: #특정 유저 엣지 생성
-                                    elevate_edge_id = f"edge:{name}:ELEVATES_PRIVILEGE:{target_user}"
+                                    elevate_edge_id = f"edge:{name}:POLICY_CHANGE:{target_user}"
                                     if elevate_edge_id not in seen_edges:
                                         seen_edges.add(elevate_edge_id)
                                         edges.append({
                                             "id": elevate_edge_id,
-                                            "relation": "ELEVATES_PRIVILEGE", 
+                                            "relation": "POLICY_CHANGE", 
                                             "src": node_id, # 출발지: 권한을 가진 Lambda
                                             "dst": f"{account_id}:iam_user:{target_user}" if target_user != "*" else "ALL_USERS",
                                             "directed": True,
-                                            "conditions": f"This Lambda can modify permissions for user '{target_user}'. Potential Privilege Escalation Path."
+                                            "conditions": f"This Lambda can modify permissions for user '{target_user}'."
                                         })         
 
         # (4) SQS가 람다를 트리거함 (SQS_TRIGGER_LAMBDA)               

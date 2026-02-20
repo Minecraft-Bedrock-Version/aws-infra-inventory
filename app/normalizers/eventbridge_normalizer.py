@@ -11,7 +11,7 @@ def normalize_eventbridge_rules(raw_payload: Dict[str, Any], account_id: str, re
     for rule in rules_list:
         rule_name = rule.get("Name")
         rule_arn = rule.get("Arn")
-        node_type = "eventbridge_rule"
+        node_type = "eventbridge"
         
         #각 필드를 채우기 위한 값
         node_id = f"{account_id}:{region}:{node_type}:{rule_name}"
@@ -28,7 +28,7 @@ def normalize_eventbridge_rules(raw_payload: Dict[str, Any], account_id: str, re
             normalized_targets.append({
                 "id": target.get("Id"),
                 "target_arn": target.get("Arn"),
-                "input": target.get("Input"), # 🚨 공격 시나리오 핵심 포인트
+                "input": target.get("Input"),
                 "input_path": target.get("InputPath"),
                 "input_transformer": target.get("InputTransformer"),
                 "role_arn": target.get("RoleArn")

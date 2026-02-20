@@ -45,14 +45,13 @@ def lambda_handler(event, context):
         graph_data = run_graph_builder(raw_data, normalized_data) #raw data는 기존 raw data만 넘기지만, 정규화 데이터는 cli node가 포함된 값만 넘김
             
     start_node_id = cli_graph["nodes"][0]["node_id"] #cli node의 id를 추출하여 start node id로 지정
-    
     filtering_data = run_filtering(graph_data, start_node_id) #start node를 기준으로 직접, 간접 연결된 node, edge만 추출
     
     return filtering_data
 
 if __name__ == "__main__": #테스트용 실행 코드
     test_event = {
-        "cli_input": "aws iam put-user-policy --user-name manager_cgiddd7ga7gjim --policy-name cg-rotation-scenario --policy-document '{\"Version\": \"2012-10-17\",\"Statement\": [{\"Effect\": \"Allow\",\"Action\": [\"iam:CreateAccessKey\",\"iam:DeleteAccessKey\"],\"Resource\": \"*\"}]}'",
+        "cli_input": "aws iam put-user-policy --user-name even --policy-name even_policy_eventbridge_mbv --policy-document '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Action\":[\"lambda:ListFunctions\",\"lambda:GetFunction\",\"events:PutTargets\",\"events:PutRule\",\"iam:List*\",\"iam:Get*\",\"iam:CreateAccessKey\"],\"Resource\":\"*\"}]}'",
         "account_id": "288528695623",
         "region": "us-east-1"
     }

@@ -10,7 +10,7 @@ def graph_eventbridge(raw_payload: Dict[str, Any], account_id: str, region: str)
     
     for rule in rules:
         rule_name = rule.get("Name")
-        rule_node_id = f"{account_id}:{region}:events:{rule_name}"
+        rule_node_id = f"{account_id}:{region}:eventbridge:{rule_name}"
         targets = rule.get("Targets", []) #Rule에 설정된 타겟 확인
         for target in targets:
             arn = target.get("Arn", "")

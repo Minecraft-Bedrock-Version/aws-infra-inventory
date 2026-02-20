@@ -10,7 +10,7 @@ def normalize_iam_users(raw_payload: Dict[str, Any], account_id: str, region="gl
         resource_id = user_value.get("UserId")
         
         node_type = "iam_user"
-        node_id = f"{account_id}:{node_type}:{resource_id}"
+        node_id = f"{account_id}:{node_type}:{name}"
         arn = user_value.get("Arn")
         create_date = user_value.get("CreateDate")
         tags = user_value.get("Tags", [])

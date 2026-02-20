@@ -12,8 +12,8 @@ def collect_ecs(session, region: str) -> Dict[str, Any]:
     cluster_arns = ecs.list_clusters().get("clusterArns", [])
     if cluster_arns:
     # 클러스터 상세 정보 조회
-    clusters_detail = ecs.describe_clusters(clusters=cluster_arns).get("clusters", [])
-    cluster_status_map = {c['clusterName']: c['status'] for c in clusters_detail}
+        clusters_detail = ecs.describe_clusters(clusters=cluster_arns).get("clusters", [])
+        cluster_status_map = {c['clusterName']: c['status'] for c in clusters_detail}
 
     for cluster_arn in cluster_arns:
         cluster_name = cluster_arn.split('/')[-1] #ARN 문자열을 '/' 기준으로 잘라 마지막 요소인 이름만 추출

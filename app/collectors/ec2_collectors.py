@@ -35,8 +35,8 @@ def collect_ec2(session, region: str) -> Dict[str, Any]:
 
                     #(수정) ecs 클러스터 이름 추출
                     match = re.search(r"ECS_CLUSTER=([^\s]+)", user_data)
-                        if match:
-                            ecs_cluster_name = match.group(1).strip()
+                    if match:
+                        ecs_cluster_name = match.group(1).strip()
 
                 instance["UserData"] = user_data #해당 instance 리스트에 UserData 값을 실제 값으로 추가
                 instance["EcsClusterName"] = ecs_cluster_name # (수정) 클러스터 이름 필드 추가

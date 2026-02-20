@@ -23,7 +23,7 @@ def normalize_secretsmanager(raw_payload: Dict[str, Any], account_id: str, regio
             "node_id": node_id,
             "resource_id": name,
             "name": name,
-            "account_id": accound,
+            "account_id": account_id,
             "region": region,
             "attributes": {
                 "arn": arn,

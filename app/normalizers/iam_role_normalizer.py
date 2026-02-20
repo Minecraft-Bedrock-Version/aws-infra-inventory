@@ -10,7 +10,7 @@ def normalize_iam_roles(raw_payload: Dict[str, Any], account_id: str, region="gl
         resource_id = role_value.get("RoleId")
         
         node_type = "iam_role"
-        node_id = f"{account_id}:{node_type}:{resource_id}"
+        node_id = f"{account_id}:{node_type}:{name}"
         arn = role_value.get("Arn")
         create_date = role_value.get("CreateDate")
         assume_role_policy = role_value.get("AssumeRolePolicyDocument",[])

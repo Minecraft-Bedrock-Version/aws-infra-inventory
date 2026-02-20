@@ -15,7 +15,9 @@ EXCLUDED_ROLES = {
     "mbvLambdaSlackRole",
     "AWSServiceRoleForECS",
     "AWSServiceRoleForAPIGateway",
-    "AWSServiceRoleForAmazonElasticFileSystem"
+    "AWSServiceRoleForAmazonElasticFileSystem",
+    "Amazon_EventBridge_Invoke_Lambda_1404102206",
+    "asd-role-ectmbw6x"
 }
 
 #IAM Role과 각 Role에 연결된 인라인, 관리형 정책 + 어떤 주체가 해당 Role을 Assume 할 수 있는지

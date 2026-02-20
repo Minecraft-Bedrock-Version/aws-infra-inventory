@@ -15,6 +15,7 @@ from graph_builder.rt_graph import graph_route_table
 from graph_builder.sg_graph import graph_security_group
 from graph_builder.ecs_graph import graph_ecs
 from graph_builder.secretsmanager_graph import graph_secrets_manager
+from graph_builder.eventbridge_graph import graph_eventbridge
 
 def run_graph_builder(collected: Dict[str, Any], normalized_map: Dict[str, Any]) -> Dict[str, Any]:
     if isinstance(normalized_map, list):
@@ -34,6 +35,7 @@ def run_graph_builder(collected: Dict[str, Any], normalized_map: Dict[str, Any])
     normalized_map["edges"].extend(graph_security_group(collected, account_id, region))
     normalized_map["edges"].extend(graph_ecs(collected, account_id, region))
     normalized_map["edges"].extend(graph_secrets_manager(collected, account_id, region))
+    normalized_map["edges"].extend(graph_eventbridge(collected, account_id, region))
 
     for node in nodes: #node를 순회하며
         if node.get("is_cli"): #is_cli 필드가 true로 있으면 해당 node만 따로 보내서 정규화 데이터를 기준으로 edge 생성하기

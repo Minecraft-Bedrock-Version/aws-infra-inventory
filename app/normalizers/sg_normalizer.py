@@ -23,7 +23,7 @@ def normalize_security_groups(raw_payload: Dict[str, Any], account_id: str, regi
             "node_id": node_id,
             "resource_id": group_id,
             "name": name_tag or group_name or group_id,
-            "main": main
+            "main": main,
             "vpc_id": vpc_id,
             "attributes": {
                 "description": sg_value.get("Description"),
