@@ -9,6 +9,7 @@ def collect_network(session, region: str):
     subnets = []
     igws = []
     route_tables = []
+    security_groups = [] #(수정) SG 추가
 
     #VPC
     paginator_vpc = ec2.get_paginator("describe_vpcs")
@@ -40,28 +41,41 @@ def collect_network(session, region: str):
         for route in page.get("RouteTables", []):
             route_id = route["RouteTableId"]
             print(f"[+] Processing Route Table: {route_id}")
-            route_tables.append(route)   
+            route_tables.append(route)  
+
+    #(수정)Security Group
+    paginator_sg = ec2.get_paginator("describe_security_groups")
+    for page in paginator_sg.paginate():
+        for sg in page.get("SecurityGroups", []):
+            sg_id = sg["GroupId"]
+            print(f"[+] Processing Security Group: {sg_id}")
+            security_groups.append(sg) 
             
     items = {
         "vpc": {
-            "region": region, #리전
-            "count": len(vpcs), #vpc 개수
-            "Vpcs": vpcs #vpc 리스트
+            "region": region,
+            "count": len(vpcs),
+            "Vpcs": vpcs
         },
         "subnet": {
-            "region": region, #리전
-            "count": len(subnets), #Subnets 개수
-            "Subnets": subnets #Subnets 리스트
+            "region": region,
+            "count": len(subnets),
+            "Subnets": subnets
         },
         "igw": {
-            "region": region, #리전
-            "count": len(igws), #InternetGateways 개수
-            "InternetGateways": igws #InternetGateways 리스트
+            "region": region,
+            "count": len(igws),
+            "InternetGateways": igws
         },
         "route_table": {
-            "region": region, #리전
-            "count": len(route_tables), #RouteTable 개수
-            "RouteTables": route_tables #RouteTable 리스트
+            "region": region,
+            "count": len(route_tables),
+            "RouteTables": route_tables
+        },
+        "security_group": {
+            "region": region,
+            "count": len(security_groups),
+            "SecurityGroups": security_groups
         }
     }
 
