@@ -24,7 +24,7 @@ def normalize_vpcs(raw_payload: Dict[str, Any], account_id: str, region: str) ->
             "name": name or vpc_id, # 이름이 없으면 ID라도 표시
             "attributes": {
                 "cidr": cidr, 
-                "default": default
+                "defaut": default
             }
         }
         nodes.append(node)
