@@ -7,15 +7,16 @@ def normalize_iam_roles(raw_payload: Dict[str, Any], account_id: str, region="gl
 
     for role_value in roles:
         name = role_value.get("RoleName")
+        resource_id = role_value.get("RoleId")
         
         node_type = "iam_role"
-        node_id = f"{account_id}:{node_type}:{name}"
-        resource_id = role_value.get("RoleId")
+        node_id = f"{account_id}:{node_type}:{resource_id}"
         arn = role_value.get("Arn")
         create_date = role_value.get("CreateDate")
         assume_role_policy = role_value.get("AssumeRolePolicyDocument",[])
         attached_policies = role_value.get("AttachedPolicies", [])
         inline_policies = role_value.get("InlinePolicies", [])
+        tags = role_value.get("Tags", [])
 
         node = {
             "node_type": node_type,
@@ -29,7 +30,8 @@ def normalize_iam_roles(raw_payload: Dict[str, Any], account_id: str, region="gl
                 "create_date": create_date.isoformat(),
                 "assume_role_policy": assume_role_policy,
                 "attached_policies": attached_policies,
-                "inline_policies": inline_policies
+                "inline_policies": inline_policies,
+                "tags":tags
             }
         }
 
