@@ -14,6 +14,8 @@ from normalizers.secretsmanager_normalizer import normalize_secretsmanager
 from normalizers.ecs_normalizer import normalize_ecs
 from normalizers.sg_normalizer import normalize_security_groups 
 from normalizers.eventbridge_normalizer import normalize_eventbridge_rules
+from normalizers.instance_profile_normalizer import normalize_instance_profile
+
 
 def run_normalizers(collected: Dict[str, Any]) -> Dict[str, Any]:
     account_id = collected["account_id"]
@@ -39,7 +41,8 @@ def run_normalizers(collected: Dict[str, Any]) -> Dict[str, Any]:
             normalize_security_groups(collected.get("security_group", {}), account_id, region) +
             normalize_secretsmanager(collected.get("secretsmanager", {}), account_id) +
             normalize_ecs(collected.get("ecs", {}), account_id, region) + 
-            normalize_eventbridge_rules(collected, account_id, region)
+            normalize_eventbridge_rules(collected, account_id, region) +
+            normalize_instance_profile(collected, account_id, region)
         )
         
     }
