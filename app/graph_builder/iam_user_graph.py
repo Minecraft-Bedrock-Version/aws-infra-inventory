@@ -37,7 +37,7 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
     rds_nodes = raw_payload.get("rds", {}).get("instances", [])
     lambda_nodes = raw_payload.get("lambda", {}).get("functions", [])
     secrets_nodes = raw_payload.get("secretsmanager", {}).get("secrets", [])
-    events_rules = raw_payload.get("eventbridge", {}).get("rules", [])
+    events_rules = raw_payload.get("events", {}).get("rules", [])
 
     for user_value in target_users: #User 목록 순회
         node_type = "iam_user"
@@ -47,6 +47,35 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
         policies = [] #해당 리스트에
         policies.extend(user_value.get("AttachedPolicies", [])) #관리형 정책과
         policies.extend(user_value.get("InlinePolicies", [])) #인라인 정책 추가
+
+        #역방향 신뢰 관계 분석 (STS_ASSUME_ROLE)
+        current_user_arn = f"arn:aws:iam::{account_id}:user/{name}" #현재 분석 중인 사용자의 고유 arn 생성
+
+        for role in iam_roles: #IAM Role을 순회하면서
+            role_name = role.get("RoleName") #대상 Role의 이름 추출
+            trust_doc = role.get("AssumeRolePolicyDocument", {}) #Role의 신뢰정책 데이터 조회
+            t_statements = trust_doc.get("Statement", []) #Statement 조회
+            
+            for t_stmt in t_statements: #Statement 순회하면서
+                principal = t_stmt.get("Principal", {}) #role의 principal 정보 확인
+                aws_principals = principal.get("AWS", []) #principal 중 서비스/사용자 계정 정보 추출
+                
+                if isinstance(aws_principals, str): #단일 문자일 경우 리스트로 변환
+                    aws_principals = [aws_principals]
+
+                if any(current_user_arn == p or name in p for p in aws_principals): #신뢰 대상 리스트의 현재 사용자의 ARN 포함 여부 확인
+                    edge_id = f"edge:{name}:STS_ASSUME_ROLE_TRUST:{role_name}" #있다면 엣지 생성
+                    
+                    if edge_id not in seen_edges:
+                        seen_edges.add(edge_id)
+                        edges.append({
+                            "id": edge_id,
+                            "relation": "STS_ASSUME_ROLE",
+                            "src": node_id,
+                            "dst": f"{account_id}:iam_role:{role_name}",
+                            "directed": True,
+                            "conditions": f"Role '{role_name}' has a Trust Policy that allows user '{name}' to assume it."
+                        }) 
         
         for policy in policies: #정책들 순회
             doc = policy.get("PolicyDocument") or policy.get("Document") or {"Statement": policy.get("Statement", [])} #정책의 내용만 조회
@@ -63,10 +92,7 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
                     resources = [resources]
                 for action in actions: #action을 순회하며
                     service = action.split(":")[0] #세미콜론을 기준으로 앞쪽의 서비스를 가져옴
-                    if service == "iam":
-                        action_name = action.split(":")[1] if ":" in action else ""
-                        if action_name.lower().startswith(("get", "list")):
-                            continue
+                    
 
                     # (1) Resource가 *이라면
                     if "*" in resources: #해당 action이 포함된 문서의 recource가 * 이라면 각 서비스의 모든 노드와 연결
@@ -108,24 +134,38 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
                             action_name = action.split(":")[1] if ":" in action else ""
                             if action_name.lower().startswith("get") or action_name.lower().startswith("list"):
                                 continue
-                            if action_name.lower().startswith("createaccesskey"): #user 대상의 권한이라면
-                                #모든 user와 연결
-                                for user in users:
-                                    if user == user_value: #현재 user (본인) 제외
-                                        continue
-                                    user_name = user["UserName"]
-                                    dst = f"{account_id}:iam_user:{user_name}"
-                                    edge_id = f"edge:{name}:IAM_USER_CREATE_USER_ACCESSKEY:{user_name}"
-                                    if edge_id not in seen_edges:
-                                        seen_edges.add(edge_id)
-                                        edges.append({
-                                            "id": edge_id,
-                                            "relation": "IAM_USER_CREATE_USER_ACCESSKEY",
-                                            "src": node_id,
-                                            "dst": dst,
-                                            "directed": True,
-                                            "conditions": "This user can generate access keys for other users."
-                                        })
+                            #모든 role과 연결
+                            for role in iam_roles:
+                                role_name = role["RoleName"]
+                                dst = f"{account_id}:iam_role:{role_name}"
+                                edge_id = f"edge:{name}:IAM_USER_ACCESS_IAM:{role_name}"
+                                if edge_id not in seen_edges:
+                                    seen_edges.add(edge_id)
+                                    edges.append({
+                                        "id": edge_id,
+                                        "relation": "IAM_USER_ACCESS_IAM",
+                                        "src": node_id,
+                                        "dst": dst,
+                                        "directed": True,
+                                        "conditions": "This User has access to IAM."
+                                    })
+                            #모든 user와 연결
+                            for user in users:
+                                if user == user_value: #현재 user (본인) 제외
+                                    continue
+                                user_name = user["UserName"]
+                                dst = f"{account_id}:iam_user:{user_name}"
+                                edge_id = f"edge:{name}:IAM_USER_ACCESS_IAM:{user_name}"
+                                if edge_id not in seen_edges:
+                                    seen_edges.add(edge_id)
+                                    edges.append({
+                                        "id": edge_id,
+                                        "relation": "IAM_USER_ACCESS_IAM",
+                                        "src": node_id,
+                                        "dst": dst,
+                                        "directed": True,
+                                        "conditions": "This User has access to IAM."
+                                    })
                         # (1-4) RDS 모든 노드와 연결
                         if service == "rds":
                             for inst in rds_nodes:
@@ -196,7 +236,7 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
                         if service == "events":
                             for rule in events_rules:
                                 rname = rule["Name"]
-                                dst = f"{account_id}:{region}:eventbridge:{rname}"
+                                dst = f"{account_id}:{region}:events:{rname}"
                                 edge_id = f"edge:{name}:IAM_USER_MANAGE_EVENTBRIDGE:{rname}"
                                 can_edit = any(act in ["events:*", "events:PutRule", "events:PutTargets"] for act in actions)
                                 if can_edit and edge_id not in seen_edges:
@@ -333,7 +373,7 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
                             # (2-8) 특정 EventBridge Rule 대상인 경우
                             if service == "events" and ":rule/" in res:
                                 rname = res.split("/")[-1]
-                                dst = f"{account_id}:{region}:eventbridge:{rname}"
+                                dst = f"{account_id}:{region}:events:{rname}"
                                 edge_id = f"edge:{name}:IAM_USER_ACCESS_EVENTS:{rname}"
                                 if edge_id not in seen_edges:
                                     seen_edges.add(edge_id)
@@ -343,38 +383,7 @@ def graph_user(raw_payload: Dict[str, Any], account_id: str, region: str, node=N
                                         "src": node_id,
                                         "dst": dst,
                                         "directed": True
-                                    })
-                
-
-                    
-
-    # (3) 역방향 신뢰 관계 분석 (STS_ASSUME_ROLE)
-    current_user_arn = f"arn:aws:iam::{account_id}:user/{name}" #현재 분석 중인 사용자의 고유 arn 생성
-
-    for role in iam_roles: #IAM Role을 순회하면서
-        role_name = role.get("RoleName") #대상 Role의 이름 추출
-        trust_doc = role.get("AssumeRolePolicyDocument", {}) #Role의 신뢰정책 데이터 조회
-        t_statements = trust_doc.get("Statement", []) #Statement 조회
-        
-        for t_stmt in t_statements: #Statement 순회하면서
-            principal = t_stmt.get("Principal", {}) #role의 principal 정보 확인
-            aws_principals = principal.get("AWS", []) #principal 중 서비스/사용자 계정 정보 추출
-            
-            if isinstance(aws_principals, str): #단일 문자일 경우 리스트로 변환
-                aws_principals = [aws_principals]
-
-            if any(current_user_arn == p or name in p for p in aws_principals): #신뢰 대상 리스트의 현재 사용자의 ARN 포함 여부 확인
-                edge_id = f"edge:{name}:STS_ASSUME_ROLE_TRUST:{role_name}" #있다면 엣지 생성
-                
-                if edge_id not in seen_edges:
-                    seen_edges.add(edge_id)
-                    edges.append({
-                        "id": edge_id,
-                        "relation": "STS_ASSUME_ROLE",
-                        "src": node_id,
-                        "dst": f"{account_id}:iam_role:{role_name}",
-                        "directed": True,
-                        "conditions": f"Role '{role_name}' has a Trust Policy that allows user '{name}' to assume it."
-                    })                                    
+                                    }) 
+                                             
 
     return edges
