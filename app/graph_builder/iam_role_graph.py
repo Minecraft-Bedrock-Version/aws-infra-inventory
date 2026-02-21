@@ -100,34 +100,29 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
             if aws_principal: #AWS 필드가 존재하면
                 if isinstance(aws_principal, str):
                     aws_principal = [aws_principal]
-                    
-                for ap in aws_principal:
-                    if ap.endswith(":root"):
-                        continue
-                    if ":user/" in ap:
-                        user_name = ap.split("/")[-1]
+                
+                for ap in aws_principal: #순회하며
+                    if ":user/" in ap: #대상이 User 라면
+                        user_name = ap.split("/")[-1] #User 이름을 가져와서 edge 생성
                         src = f"{account_id}:iam_user:{user_name}"
                         dst = node_id
                         edge_id = f"edge:{user_name}:ASSUME_ROLE:{name}"
-                        _add_edge(
-                            edge_id,
-                            "ASSUME_ROLE",
-                            src,
-                            dst,
-                            "This role explicitly trusts this IAM User."
-                        )
-                    elif ":role/" in ap:
-                        role_name = ap.split("/")[-1]
+                        _add_edge(edge_id, "ASSUME_ROLE", src, dst, "This is a role that an IAM User can assume.")
+                    
+                    if ":role/" in ap: #대상이 역할이라면
+                        role_name = ap.split("/")[-1] #역할 이름을 가져와서 edge 생성
                         src = f"{account_id}:iam_role:{role_name}"
                         dst = node_id
                         edge_id = f"edge:{role_name}:ASSUME_ROLE:{name}"
-                        _add_edge(
-                            edge_id,
-                            "ASSUME_ROLE",
-                            src,
-                            dst,
-                            "This role explicitly trusts this IAM Role."
-                        )
+                        _add_edge(edge_id, "ASSUME_ROLE", src, dst, "This is a role that an IAM Role can assume.")
+                    
+                    if ":user/" in ap:
+                        user_name = ap.split("/")[-1]
+                        # 사용자가 이 Role로 '변신'할 수 있다는 관계 (공격 경로의 핵심)
+                        src = f"{account_id}:iam_user:{user_name}"
+                        dst = node_id
+                        _add_edge(f"edge:{user_name}:CAN_ASSUME:{name}", "STS_ASSUME_ROLE", src, dst, f"User {user_name} is trusted to assume this role.")
+
 
     # ---------------------------------------2. 정책 권한 분석 -------------------------------------------------------
     # - Role에 연결된 정책(Attached/Inline Policies)을 분석하여 이 역할이 접근할 수 있는 리소스와의 관계를 정의
@@ -138,18 +133,6 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
         policies.extend(role_value.get("InlinePolicies", [])) #인라인 정책 추가
         
         for policy in policies: #정책들 순회
-
-            p_name = policy.get("PolicyName", "UnknownPolicy")
-            p_edge_id = f"edge:{name}:HAS_POLICY:{p_name}"
-            p_dst = f"{account_id}:iam_policy:{p_name}"
-            _add_edge(
-                p_edge_id, 
-                "POLICY_ATTACHED_TO_ROLE", 
-                node_id,   # Source: IAM Role
-                p_dst,     # Destination: IAM Policy
-                f"The IAM Policy '{p_name}' is attached to this role."
-            )
-
             if "Versions" in policy: #관리형 정책의 경우 Version의 DefaultVersion 가져오기
                 docs = [v["Document"] for v in policy.get("Versions", []) if v.get("IsDefaultVersion")]
             elif "PolicyDocument" in policy: #인라인 정책의 경우 정책 내용 가져오기
@@ -176,10 +159,6 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                     # - 그래서 Resource 처리(if "*" in resources / else)는 반드시 이 Action 루프 내부에서 실행됨
                     for action in actions:  # action을 순회하며
                         service = action.split(":")[0]
-                        if service == "iam":
-                            action_name = action.split(":")[1] if ":" in action else ""
-                            if action_name.lower().startswith(("get", "list")):
-                                continue
 
                         # Lambda privesc-oriented relations (lambda_privesc 시나리오 분석용 추가 관계)
                         # - 기존 IAM_ROLE_ACCESS_* 는 "접근 가능" 수준의 범용 연결
@@ -342,9 +321,6 @@ def graph_role(raw_payload: Dict[str, Any], account_id: str, region: str) -> Dic
                             # IAM 모든 노드 연결
                             if service == "iam":
                                 # 모든 user와 연결
-                                action_name = action.split(":")[1] if ":" in action else ""
-                                if action_name.lower().startswith(("get", "list", "attachuserpolicy")):
-                                    continue
                                 for user in iam_users:
                                     user_name = user["UserName"]
                                     dst = f"{account_id}:iam_user:{user_name}"
